@@ -9,11 +9,28 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v2
-
-          - name: Get added lines
+          - name: List changed files
+            id: changes
             run: |
-              git fetch origin pull/${{ github.event.pull_request.number }}/merge
-              git diff HEAD...FETCH_HEAD --unified=0 > pr.diff
-              cat pr.diff
+              changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+              echo "::set-output name=files::$changed_files"
             shell: bash
+
+          - name: Display changed files
+            run: |
+              echo "Changed files:"
+              echo "${{ steps.changes.outputs.files }}"
+            shell: bash
+
+          - name: Get new file contents
+            id: file_contents
+            run: |
+              changed_files="${{ steps.changes.outputs.files }}"
+              for file in $changed_files; do
+                echo "Contents of $file:"
+                cat $file
+              done
+            shell: bash
+
+
 
