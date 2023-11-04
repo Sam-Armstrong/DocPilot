@@ -1,0 +1,24 @@
+"""
+Description paragraph here.
+
+Parameters
+----------
+first : array_like
+    the 1st param description name `first`
+second :
+    the 2nd param description
+third : {'value', 'other'}, optional description
+    the 3rd param, by default 'value'
+
+Returns
+-------
+ret
+    description of return
+
+Raises
+------
+KeyError
+    when a key error
+OtherError
+    when an other error
+"""
