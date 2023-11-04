@@ -1,39 +1,37 @@
-name: Get Changed Files
-on: [push]
+name: Doc-Pilot
+on: [push, pull_request, workflow_dispatch, workflow_call]
+
+permissions: 
+    contents: write
 
 jobs:
-  get_changed_files:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+    add-docstring:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v2
+          - name: List changed files
+            id: changes
+            run: |
+              changed_files=$(git diff --name-only HEAD^HEAD)
+              )
+              echo "::set-output name=files::$changed_files"
+            shell: bash
 
-    - name: Get previous commit
-      id: previous_commit
-      run: |
-        PREVIOUS_COMMIT=$(git rev-parse HEAD~1)
-        echo "::set-output name=previous_commit::$PREVIOUS_COMMIT"
-      shell: bash
+          - name: Display changed files
+            run: |
+              echo "Changed files:"
+              echo "${{ steps.changes.outputs.files }}"
+            shell: bash
 
-    - name: List changed files
-      id: changes
-      run: |
-        PREVIOUS_COMMIT=${{ steps.previous_commit.outputs.previous_commit }}
-        if [ -z "$PREVIOUS_COMMIT" ]; then
-          echo "No previous commit found."
-        else
-          changed_files=$(git diff --name-only $PREVIOUS_COMMIT HEAD)
-          echo "::set-output name=files::$changed_files"
-        fi
-      shell: bash
+          - name: Get new file contents
+            id: file_contents
+            run: |
+              changed_files="${{ steps.changes.outputs.files }}"
+              for file in $changed_files; do
+                echo "Contents of $file:"
+                cat $file
+              done
+            shell: bash
 
-    - name: Display changed files
-      run: |
-        changed_files="${{ steps.changes.outputs.files }}"
-        if [ -n "$changed_files" ]; then
-          echo "Changed files:"
-          echo "$changed_files"
-        else
-          echo "No files have changed."
-        fi
-      shell: bash
+
+
