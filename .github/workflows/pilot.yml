@@ -13,12 +13,12 @@ jobs:
               path: DocPilot
               persist-credentials: false
               submodules: "recursive"
-              fetch-depth: 0
+              fetch-depth: 10
 
           - name: List changed files
             id: changes
             run: |
-              changed_files=$(git diff --name-only ${{ github.event.pull_request.base.ref}} ${{ github.event.pull_request.base.sha }})
+              changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
               echo "::set-output name=files::$changed_files"
     
 
