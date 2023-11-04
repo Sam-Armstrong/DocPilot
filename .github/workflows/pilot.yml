@@ -2,6 +2,7 @@ name: Doc-Pilot
 on: [pull_request]
 
 permissions: 
+    actions: read
     contents: write
 
 jobs:
