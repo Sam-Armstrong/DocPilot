@@ -4,13 +4,6 @@ import json
 import os
 import fileinput
 
-def _extract_relevant_info(text):
-    start_index = text.find('"""')
-    if start_index != -1:
-        extracted_text = text[start_index:]
-        return extracted_text
-    else:
-        return None
 
 filename = "dummy-files/test.py"
 
@@ -51,6 +44,7 @@ def add_docstring(key):
     # diff text file all strings, parse the file to only fetch statements with additions
     # changed file names
     with open("diff.txt", '+rb') as f:
+        print("Hello world", f)
         # intelligent regex 
         content = f.readlines()
         fns_with_docstring = dict()

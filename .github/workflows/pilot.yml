@@ -27,11 +27,12 @@ jobs:
               cd DocPilot
               # files changed can be accessed through ${HOME}/files.json
               git diff HEAD~1 HEAD --output="temp.txt"
-              grep '^\+' temp.txt > diff.txt      
+              grep '^\+' temp.txt > diff.txt     
+               
           - name: Install Python Clients
             run: |
               pip install anthropic
-              
+
           - name: Run Claude Magic
             run: |
               cd DocPilot
