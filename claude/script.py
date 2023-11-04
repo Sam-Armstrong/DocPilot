@@ -7,6 +7,13 @@ import fileinput
 
 filename = "dummy-files/test.py"
 
+def _extract_relevant_info(text):
+    start_index = text.find('"""')
+    if start_index != -1:
+        extracted_text = text[start_index:]
+        return extracted_text
+    else:
+        return None
 
 def generate_docstring(file_str, fn_name, key):
     with open(file_str, 'r') as f:
@@ -31,16 +38,15 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
-    print(completion.completion)
-    return completion.completion
+    return _extract_relevant_info(completion.completion)
 
-def starter_code(key):
+def add_docstring(key):
     # diff text file all strings, parse the file to only fetch statements with additions
     # changed file names
     with open("diff.txt", '+rb') as f:
         # intelligent regex 
         content = f.readlines()
-        fns_without_docstring = dict()
+        fns_with_docstring = dict()
         contains_docstring = False
         in_func = False
         for line in content:
@@ -51,13 +57,13 @@ def starter_code(key):
                 # regex to check if there exists a docstring
             if line.replace(' ', '') == '+\n' or line == '\n':
                 if in_func and not contains_docstring:
-                    fns_without_docstring[func_name] = generate_docstring(filename, func_name, key)
+                    fns_with_docstring[func_name] = generate_docstring(filename, func_name, key)
                 in_func = False
                 contains_docstring = False
                 func_name = ""
             if '"""' in line:
                 contains_docstring = True
-    return fns_without_docstring
+    return fns_with_docstring
 
 
 def merge_docstring(fns_without_docstring):
@@ -91,7 +97,7 @@ def merge_docstring(fns_without_docstring):
 
 if __name__ == "__main__":
     key = sys.argv[1]
-    docstring_dict = starter_code(key)
+    docstring_dict = add_docstring(key)
     merge_docstring(docstring_dict)
     print(docstring_dict)
     
