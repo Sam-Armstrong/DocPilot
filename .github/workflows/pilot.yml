@@ -6,7 +6,7 @@ permissions:
     contents: write
 
 jobs:
-    add-docstring:
+  add-docstring:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v2
@@ -19,21 +19,15 @@ jobs:
           - name: Get files Changes
             uses: lots0logs/gh-action-get-changed-files@2.2.2
             with:
-                token: ${{ secrets.GITHUB_TOKEN }}
-
+              token: ${{ secrets.GITHUB_TOKEN }}
         
           - name: Fetch Commit Changes
             id: fetch_changes
             run: |
               cd DocPilot
+              # files changed can be accessed through ${HOME}/files.json
               git diff HEAD~1 HEAD --output="diff.txt"
           
-         - name: Run Claude Magic
-           run: | 
-              echo "python3 claude_script.py"
-        
-          - name: Display Commit Changes
+          - name: Run Claude Magic
             run: |
-                commit_changes="${{ steps.fetch_changes.outputs }}"
-                echo "$commit_changes"
-            shell: bash
+              echo "python3 claude_script.py"
