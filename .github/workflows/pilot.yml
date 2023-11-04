@@ -1,5 +1,5 @@
 name: Doc-Pilot
-on: push
+on: [push, pull_request]
 
 permissions: 
     actions: read
@@ -14,36 +14,23 @@ jobs:
               path: DocPilot
               persist-credentials: false
               submodules: "recursive"
-              fetch-depth: 10
+              fetch-depth: 100
 
-              
-        
-          - name: Install GitPython
-            run: |
-                python -m pip install --upgrade pip
-                pip install pygithub
-            shell: bash
+          - name: Get files Changes
+            uses: lots0logs/gh-action-get-changed-files@2.2.2
+            with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+
         
           - name: Fetch Commit Changes
             id: fetch_changes
             run: |
-              from github import Github
-
-              g = Github(${{secrets.GITHUB_TOKEN}})
-              
-              # Get the authenticated user (you can change this to any user if needed)
-              user = g.get_user()
-              
-              # Get the user's current repository (you can change this to any other repository if needed)
-              repo = user.get_repo(${{github.repository}})
-              
-              # Get the default branch of the repository
-              branch = repo.get_branch(repo.default_branch)
-              
-              # Get the latest commit on the default branch
-              latest_commit = branch.commit
-              print(latest_commit)
-            shell: python
+              cd DocPilot
+              git diff HEAD~1 HEAD --output="diff.txt"
+          
+         - name: Run Claude Magic
+           run: | 
+              echo "python3 claude_script.py"
         
           - name: Display Commit Changes
             run: |
