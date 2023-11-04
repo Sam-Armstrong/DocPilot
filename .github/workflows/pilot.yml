@@ -17,18 +17,15 @@ jobs:
           - name: Get changed files
             id: changed-files
             run: |
-              git diff --name-only ${{ github.event.before }} ${{ github.sha }} | tee changed_files.txt
-      
-          - name: Get lines of code changed
-            id: loc
+                  if ${{ github.event_name == 'pull_request' }}; then
+                      echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+                  else
+                      echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+                  fi
+                  
+          - name: List changed files
             run: |
-              git diff ${{ github.event.before }} ${{ github.sha }} --numstat | tee loc.txt
-              loc=$(cat loc.txt | awk '{s+=$1} END {print s}')
-              echo "lines_of_code=$loc" >> $GITHUB_ENV
-      
-          - name: Print outputs  
-            run: |
-              echo "Changed files:"
-              cat changed_files.txt
-              echo "${{ env.lines_of_code }} lines of code changed"
+                  for file in ${{ steps.changed-files.outputs.changed_files }}; do
+                      echo "$file was changed"
+                  done
 
