@@ -8,26 +8,27 @@ jobs:
     add-docstring:
         runs-on: ubuntu-latest
         steps:
-        - name: Checkout 🛎️ ${{ github.event.repository.name }}
-          uses: actions/checkout@v4
-          with:
-            path: DoCPilot
-            persist-credentials: false
-            submodules: "recursive"
-            set-safe-directory: false
+          - uses: actions/checkout@v2
 
-        - name: Get changed files
-          id: changed-files
-          uses: lots0logs/gh-action-get-changed-files@2.2.2
-          with:
-            token: ${{ secrets.GITHUB_TOKEN}}
-        
-        - name: Run Claude Script
-          run: |
-            cat ${HOME}/files.json > /dev/stdout
-            echo "claude magic"
-        
-        - name: Cleanup Process
-          run: |
-            echo "We have now run cleanup"
+          - name: Install dependencies
+            run: |
+              sudo apt-get install -y git diffutils
+      
+          - name: Get changed files
+            id: changed-files
+            run: |
+              git diff --name-only ${{ github.event.before }} ${{ github.sha }} | tee changed_files.txt
+      
+          - name: Get lines of code changed
+            id: loc
+            run: |
+              git diff ${{ github.event.before }} ${{ github.sha }} --numstat | tee loc.txt
+              loc=$(cat loc.txt | awk '{s+=$1} END {print s}')
+              echo "lines_of_code=$loc" >> $GITHUB_ENV
+      
+          - name: Print outputs  
+            run: |
+              echo "Changed files:"
+              cat changed_files.txt
+              echo "${{ env.lines_of_code }} lines of code changed"
 
