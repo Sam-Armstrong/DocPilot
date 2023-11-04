@@ -13,7 +13,7 @@ jobs:
               path: DocPilot
               persist-credentials: false
               submodules: "recursive"
-              fetch-depth: 2
+              fetch-depth: 0
 
           - name: List changed files
             id: changes
