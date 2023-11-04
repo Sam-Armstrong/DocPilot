@@ -27,12 +27,13 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
+    print(completion.completion)
     return completion.completion
 
 def starter_code(key):
     # diff text file all strings, parse the file to only fetch statements with additions
        # changed file names
-    filename = "/dummy-files/test.py"
+    filename = "dummy-files/test.py"
     with open("diff.txt", '+rb') as f:
         # intelligent regex 
         content = f.readlines()
