@@ -1,5 +1,5 @@
 name: Doc-Pilot
-on: [pull_request]
+on: push
 
 permissions: 
     actions: read
