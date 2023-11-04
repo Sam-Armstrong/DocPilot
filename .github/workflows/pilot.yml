@@ -9,12 +9,19 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v2
+            with:
+              path: DocPilot
+              persist-credentials: false
+              submodules: "recursive"
+              fetch-depth: 2
+
           - name: List changed files
             id: changes
+            shell: pwsh
             run: |
               $changed_files = git diff --name-only HEAD^ HEAD
               echo "::set-output name=files::$changed_files"
-            shell: pwsh
+    
 
           - name: Display changed files
             run: |
