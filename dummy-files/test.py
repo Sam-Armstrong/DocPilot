@@ -76,3 +76,10 @@ def arange(
             return res.astype(jnp.int32)
     return res
 
+def meshgrid(
+    *arrays: JaxArray,
+    sparse: bool = False,
+    indexing: str = "xy",
+    out: Optional[JaxArray] = None,
+) -> List[JaxArray]:
+    return jnp.meshgrid(*arrays, sparse=sparse, indexing=indexing)

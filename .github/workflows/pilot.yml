@@ -1,33 +1,33 @@
 name: Doc-Pilot
-on: [push, pull_request, workflow_dispatch, workflow_call]
+on: [push, pull_request]
 
 permissions: 
+    actions: read
     contents: write
 
 jobs:
-    add-docstring:
+  add-docstring:
         runs-on: ubuntu-latest
         steps:
-        - name: Checkout 🛎️ ${{ github.event.repository.name }}
-          uses: actions/checkout@v4
-          with:
-            path: DoCPilot
-            persist-credentials: false
-            submodules: "recursive"
-            set-safe-directory: false
+          - uses: actions/checkout@v2
+            with:
+              path: DocPilot
+              persist-credentials: false
+              submodules: "recursive"
+              fetch-depth: 100
 
-        - name: Get changed files
-          id: changed-files
-          uses: lots0logs/gh-action-get-changed-files@2.2.2
-          with:
-            token: ${{ secrets.GITHUB_TOKEN}}
+          - name: Get files Changes
+            uses: lots0logs/gh-action-get-changed-files@2.2.2
+            with:
+              token: ${{ secrets.GITHUB_TOKEN }}
         
-        - name: Run Claude Script
-          run: |
-            cat ${HOME}/files.json > /dev/stdout
-            echo "claude magic"
-        
-        - name: Cleanup Process
-          run: |
-            echo "We have now run cleanup"
-
+          - name: Fetch Commit Changes
+            id: fetch_changes
+            run: |
+              cd DocPilot
+              # files changed can be accessed through ${HOME}/files.json
+              git diff HEAD~1 HEAD --output="diff.txt"
+          
+          - name: Run Claude Magic
+            run: |
+              echo "python3 claude_script.py"
