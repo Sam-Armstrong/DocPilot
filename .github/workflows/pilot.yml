@@ -30,7 +30,7 @@ jobs:
                 import git
                 import json
         
-                repo = git.Repo(".")
+                repo = git.Repo(${{github.repository}})
                 commit = repo.head.commit
         
                 commit_changes = []
