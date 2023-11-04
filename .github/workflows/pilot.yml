@@ -30,4 +30,5 @@ jobs:
           
           - name: Run Claude Magic
             run: |
-              echo "python3 claude_script.py"
+              cd DocPilot
+              python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
