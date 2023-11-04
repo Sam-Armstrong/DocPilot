@@ -29,34 +29,31 @@ def generate_docstring(file_str, fn_name, key):
 
 def starter_code(key):
     # diff text file all strings, parse the file to only fetch statements with additions
+       # changed file names
+    filename = "/Users/aarsh/Desktop/DocPilot/dummy-files/test.py"
     with open("diff.txt", '+rb') as f:
         # intelligent regex 
-        content = f.open()
+        content = f.readlines()
         fns_without_docstring = dict()
         contains_docstring = False
+        in_func = False
         for line in content:
-            if line.contains("+def "):
+            line = line.decode('utf-8')  # Decode the bytes to a string
+            if line.startswith("+def "):
                 in_func = True
                 func_name = line.split('+def ')[1].split('(')[0]
                 # regex to check if there exists a docstring
-            if line == "+":
+            if line.replace(' ', '') == '+\n':
                 if in_func and not contains_docstring:
-                    fns_without_docstring[func_name] = generate_docstring(filename, func_name, key)
+                    print(func_name)
+                    # fns_without_docstring[func_name] = generate_docstring(filename, func_name, key)
                 in_func = False
                 contains_docstring = False
                 func_name = ""
-            if line.contains('"""'):
+            if '"""' in line:
                 contains_docstring = True
-
-        # changed function names here
-    # changed file names
-    with open("~/files.json", 'r') as f:
-        filename = json.loads(f)
-        # use os to walkthrough this file path
-        generate_docstring()
-    generate_docstring(filename, content, key)
-
+    
 if __name__ == "__main__":
-    key = sys.argv[1]
-    starter_code(key)
+    # key = sys.argv[1]
+    starter_code("hello world")
     
