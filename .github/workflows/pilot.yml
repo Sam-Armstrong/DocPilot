@@ -12,10 +12,10 @@ jobs:
           - name: List changed files
             id: changes
             run: |
-              $changed_files= git diff --name-only HEAD^ HEAD
+              $changed_files = git diff --name-only HEAD^ HEAD
               )
               echo "::set-output name=files::$changed_files"
-            shell: bash
+            shell: pwsh
 
           - name: Display changed files
             run: |
