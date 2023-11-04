@@ -4,6 +4,13 @@ import json
 import os
 import fileinput
 
+def _extract_relevant_info(text):
+    start_index = text.find('"""')
+    if start_index != -1:
+        extracted_text = text[start_index:]
+        return extracted_text
+    else:
+        return None
 
 filename = "dummy-files/test.py"
 
