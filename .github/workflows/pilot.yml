@@ -1,0 +1,34 @@
+name: Doc-Pilot
+on: [push, pull_request, workflow_dispatch, workflow_call]
+
+permissions: 
+    contents: write
+
+jobs:
+    add-docstring:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout 🛎️ ${{ github.event.repository.name }}
+          uses: actions/checkout@v4
+          with:
+            path: DoCPilot
+            persist-credentials: false
+            submodules: "recursive"
+            set-safe-directory: false
+
+        - name: Get changed files
+          id: changed-files
+          uses: lots0logs/gh-action-get-changed-files@2.2.2
+          with:
+            token: ${{ secrets.GITHUB_TOKEN}}
+        
+        - name: Run Claude Script
+          run: |
+            echo "steps.changed-files.outputs.all"
+            echo "claude magic"
+        
+        - name: Cleanup Process
+          run: |
+            echo "We have now run cleanup"
+
+            
