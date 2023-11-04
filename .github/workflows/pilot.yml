@@ -1,5 +1,5 @@
 name: Doc-Pilot
-on: [push, pull_request, workflow_dispatch, workflow_call]
+on: [pull_request]
 
 permissions: 
     contents: write
@@ -18,7 +18,7 @@ jobs:
           - name: List changed files
             id: changes
             run: |
-              changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+              changed_files=$(git diff --name-only ${{ github.event.pull_request.base.ref}} ${{ github.event.pull_request.base.sha }})
               echo "::set-output name=files::$changed_files"
     
 
