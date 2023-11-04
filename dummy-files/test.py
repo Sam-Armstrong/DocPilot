@@ -83,3 +83,13 @@ def meshgrid(
     out: Optional[JaxArray] = None,
 ) -> List[JaxArray]:
     return jnp.meshgrid(*arrays, sparse=sparse, indexing=indexing)
+
+def ones_like(
+    x: JaxArray,
+    /,
+    *,
+    dtype: jnp.dtype,
+    device: jaxlib.xla_extension.Device = None,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    return jnp.ones_like(x, dtype=dtype)
