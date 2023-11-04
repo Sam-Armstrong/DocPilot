@@ -54,3 +54,25 @@ def asarray(
         return jnp.array(obj, dtype=dtype, copy=True)
     else:
         return jnp.asarray(obj, dtype=dtype)
+    
+def arange(
+    start: float,
+    /,
+    stop: Optional[float] = None,
+    step: float = 1,
+    *,
+    dtype: Optional[jnp.dtype] = None,
+    device: jaxlib.xla_extension.Device = None,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    if dtype:
+        dtype = as_native_dtype(dtype)
+        ivy.utils.assertions._check_jax_x64_flag(dtype.name)
+    res = jnp.arange(start, stop, step, dtype=dtype)
+    if not dtype:
+        if res.dtype == jnp.float64:
+            return res.astype(jnp.float32)
+        elif res.dtype == jnp.int64:
+            return res.astype(jnp.int32)
+    return res
+
