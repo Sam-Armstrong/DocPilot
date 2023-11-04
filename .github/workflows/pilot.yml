@@ -10,22 +10,10 @@ jobs:
         steps:
           - uses: actions/checkout@v2
 
-          - name: Install dependencies
+          - name: Get added lines
             run: |
-              sudo apt-get install -y git diffutils
-      
-          - name: Get changed files
-            id: changed-files
-            run: |
-                  if ${{ github.event_name == 'pull_request' }}; then
-                      echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
-                  else
-                      echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
-                  fi
-                  
-          - name: List changed files
-            run: |
-                  for file in ${{ steps.changed-files.outputs.changed_files }}; do
-                      echo "$file was changed"
-                  done
+              git fetch origin pull/${{ github.event.pull_request.number }}/merge
+              git diff HEAD...FETCH_HEAD --unified=0 > pr.diff
+              cat pr.diff
+            shell: bash
 
