@@ -27,7 +27,7 @@ jobs:
               cd DocPilot
               # files changed can be accessed through ${HOME}/files.json
               git diff HEAD~1 HEAD --output="temp.txt"
-              grep '^\+' diff.txt > diff.txt      
+              grep '^\+' temp.txt > diff.txt      
           
           - name: Run Claude Magic
             run: |
