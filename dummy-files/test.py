@@ -76,3 +76,31 @@ def arange(
             return res.astype(jnp.int32)
     return res
 
+@_asarray_to_native_arrays_and_back
+@_asarray_infer_device
+@_asarray_handle_nestable
+@_asarray_inputs_to_native_shapes
+@_asarray_infer_dtype
+def asarray(
+    obj: Union[
+        JaxArray,
+        bool,
+        int,
+        float,
+        tuple,
+        NestedSequence,
+        SupportsBufferProtocol,
+        np.ndarray,
+    ],
+    /,
+    *,
+    copy: Optional[bool] = None,
+    dtype: Optional[jnp.dtype] = None,
+    device: jaxlib.xla_extension.Device = None,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    ivy.utils.assertions._check_jax_x64_flag(dtype)
+    if copy is True:
+        return jnp.array(obj, dtype=dtype, copy=True)
+    else:
+        return jnp.asarray(obj, dtype=dtype)
