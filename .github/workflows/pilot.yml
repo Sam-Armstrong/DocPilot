@@ -13,7 +13,6 @@ jobs:
             id: changes
             run: |
               $changed_files = git diff --name-only HEAD^ HEAD
-              )
               echo "::set-output name=files::$changed_files"
             shell: pwsh
 
