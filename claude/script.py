@@ -1,7 +1,5 @@
-from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
+from anthropic import Anthropic
 import sys
-import json
-import os
 import fileinput
 
 
@@ -38,8 +36,7 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
-    print(_extract_relevant_info(completion.completion))
-    return _extract_relevant_info(completion.completion)
+    return completion.completion + "\n"
 
 def add_docstring(key):
     # diff text file all strings, parse the file to only fetch statements with additions
@@ -76,26 +73,36 @@ def merge_docstring(fns_without_docstring):
         docstring_placement = {}
         for i, line in enumerate(content):
             line = line.decode('utf-8')
-            if any([fn_name in line for fn_name in fns_without_docstring.keys()]) and "def" in line:  # if a fn without docstring is defined on this line
+
+            # if a fn without docstring is defined on this line
+            if any([fn_name in line for fn_name in fns_without_docstring.keys()]) and "def" in line:
                 fn_wo_doc = True
                 for fn_name in fns_without_docstring.keys():
                     if fn_name in line:
                         current_docstring = fns_without_docstring[fn_name]
                         break
-            if ":" in line and fn_wo_doc:
-                docstring_placement[i] = current_docstring
+            if "):" in line and fn_wo_doc:
+                docstring_placement[i + 2] = current_docstring
                 current_docstring = ""
                 fn_wo_doc = False
     
-    # print('docstring_placement', docstring_placement)
+    docstring_placement = dict(sorted(docstring_placement.items()))  # sort docstring placements
 
-    # with fileinput.input(files=(filename,), inplace=True) as file:
-    #     for line_num, line in enumerate(file, start=1):
-    #         # Check if this line should have content added
-    #         if line_num in fns_to_add:
-    #             content_to_add = fns_to_add[line_num]
-    #             print(content_to_add, end='')
-    #         print(line, end='')
+    accumulated_shift = 0
+    modified_docstring_placement = {}
+    for i, (ln_num, docstring) in enumerate(docstring_placement.items()):
+        new_ln_num = ln_num + i + accumulated_shift
+        modified_docstring_placement[new_ln_num] = docstring
+        accumulated_shift += docstring.count("\n") + 1
+    # TODO: test the shift here is correct with many docstrings being added
+
+    with fileinput.input(files=(filename,), inplace=True) as file:
+        for line_num, line in enumerate(file, start=1):
+            # Check if this line should have content added
+            if line_num in modified_docstring_placement:
+                content_to_add = modified_docstring_placement[line_num]
+                print(content_to_add, end='')
+            print(line, end='')
 
 if __name__ == "__main__":
     key = sys.argv[1]
