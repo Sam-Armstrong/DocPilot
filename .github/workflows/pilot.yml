@@ -18,13 +18,15 @@ jobs:
 
         - name: Get changed files
           id: changed-files
-          uses: lots0logs/gh-action-get-changed-files@2.2.2
-          with:
-            token: ${{ secrets.GITHUB_TOKEN}}
+          run: |
+            if ${{ github.event_name == 'pull_request' }}; then
+                echo "changed_files=$(git diff --name-only -r HEAD^1 HEAD | xargs)" >> $GITHUB_OUTPUT
+            else
+                echo "changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_OUTPUT
+            fi
         
         - name: Run Claude Script
           run: |
-            cat ${HOME}/files.json > /dev/stdout
             echo "claude magic"
         
         - name: Cleanup Process

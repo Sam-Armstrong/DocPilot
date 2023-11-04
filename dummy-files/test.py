@@ -104,3 +104,26 @@ def asarray(
         return jnp.array(obj, dtype=dtype, copy=True)
     else:
         return jnp.asarray(obj, dtype=dtype)
+
+def full(
+    shape: Union[ivy.NativeShape, Sequence[int]],
+    fill_value: Union[int, float, bool],
+    *,
+    dtype: Optional[Union[ivy.Dtype, jnp.dtype]] = None,
+    device: jaxlib.xla_extension.Device = None,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    dtype = ivy.default_dtype(dtype=dtype, item=fill_value, as_native=True)
+    return jnp.full(shape, fill_value, dtype)
+
+
+def full_like(
+    x: JaxArray,
+    /,
+    fill_value: Number,
+    *,
+    dtype: jnp.dtype,
+    device: jaxlib.xla_extension.Device = None,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    return jnp.full_like(x, fill_value, dtype=dtype)
