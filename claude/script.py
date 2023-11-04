@@ -38,6 +38,7 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
+    print(_extract_relevant_info(completion.completion))
     return _extract_relevant_info(completion.completion)
 
 def add_docstring(key):
@@ -86,7 +87,7 @@ def merge_docstring(fns_without_docstring):
                 current_docstring = ""
                 fn_wo_doc = False
     
-    print('docstring_placement', docstring_placement)
+    # print('docstring_placement', docstring_placement)
 
     # with fileinput.input(files=(filename,), inplace=True) as file:
     #     for line_num, line in enumerate(file, start=1):
@@ -100,5 +101,4 @@ if __name__ == "__main__":
     key = sys.argv[1]
     docstring_dict = add_docstring(key)
     merge_docstring(docstring_dict)
-    print(docstring_dict)
     
