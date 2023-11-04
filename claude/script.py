@@ -32,6 +32,22 @@ def starter_code(key):
     with open("diff.txt", '+rb') as f:
         # intelligent regex 
         content = f.open()
+        fns_without_docstring = dict()
+        contains_docstring = False
+        for line in content:
+            if line.contains("+def "):
+                in_func = True
+                func_name = line.split('+def ')[1].split('(')[0]
+                # regex to check if there exists a docstring
+            if line == "+":
+                if in_func and not contains_docstring:
+                    fns_without_docstring[func_name] = generate_docstring(filename, func_name, key)
+                in_func = False
+                contains_docstring = False
+                func_name = ""
+            if line.contains('"""'):
+                contains_docstring = True
+
         # changed function names here
     # changed file names
     with open("~/files.json", 'r') as f:
