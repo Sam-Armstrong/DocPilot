@@ -20,6 +20,7 @@ jobs:
             id: changes
             shell: bash
             run: |
+              cd DocPilot
               changed_files=$(git diff --name-only HEAD~1 HEAD)
               echo "::set-output name=files::$changed_files"
     
