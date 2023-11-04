@@ -16,31 +16,34 @@ jobs:
               submodules: "recursive"
               fetch-depth: 10
 
-          - name: List changed files
-            id: changes
-            shell: bash
+              
+        
+          - name: Fetch Commit Changes
+            id: fetch_changes
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             run: |
-              cd DocPilot
-              changed_files=$(git diff --name-only HEAD~1 HEAD)
-              cat > changed_files
-              echo "::set-output name=files::$changed_files"
-    
-
-          - name: Display changed files
-            run: |
-              echo "Changed files:"
-              echo "${{ steps.changes.outputs.files }}"
+              COMMIT_HASH=$(git log -1 --pretty=format:"%H")
+              OWNER=${{ github.repository_owner }}
+              REPO=${{ github.repository }}
+              API_URL="https://api.github.com/repos/$OWNER/$REPO/commits/$COMMIT_HASH"
+      
+              # Fetch commit data including changes
+              COMMIT_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -X GET $API_URL)
+              CHANGES_URL=$(echo "$COMMIT_DATA" | jq -r '.files_url')
+      
+              # Fetch the detailed changes
+              CHANGES_DATA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" -X GET $CHANGES_URL)
+              echo "::set-output name=commit_changes::$(echo "$CHANGES_DATA" | jq -r '.[] | .filename, .additions, .deletions, .changes')"
+      
             shell: bash
-
-          - name: Get new file contents
-            id: file_contents
+      
+          - name: Display Commit Changes
             run: |
-              changed_files="${{ steps.changes.outputs.files }}"
-              for file in $changed_files; do
-                echo "Contents of $file:"
-                cat $file
-              done
+              commit_changes="${{ steps.fetch_changes.outputs.commit_changes }}"
+              echo "$commit_changes"
             shell: bash
+      
 
 
 
