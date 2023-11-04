@@ -21,29 +21,28 @@ jobs:
           - name: Install GitPython
             run: |
                 python -m pip install --upgrade pip
-                pip install gitpython
+                pip install pygithub
             shell: bash
         
           - name: Fetch Commit Changes
             id: fetch_changes
             run: |
-                import git
-                import json
-        
-                repo = git.Repo(${{github.repository}})
-                commit = repo.head.commit
-        
-                commit_changes = []
-        
-                for diff in commit.diff(commit.parents[0]):
-                    commit_changes.append({
-                        "filename": diff.a_path,
-                        "additions": diff.count("insertions"),
-                        "deletions": diff.count("deletions"),
-                        "changes": diff.count("lines")
-                    })
-        
-                print(json.dumps(commit_changes))       
+              from github import Github
+
+              g = Github(${{secrets.GITHUB_TOKEN}})
+              
+              # Get the authenticated user (you can change this to any user if needed)
+              user = g.get_user()
+              
+              # Get the user's current repository (you can change this to any other repository if needed)
+              repo = user.get_repo(${{github.repository}})
+              
+              # Get the default branch of the repository
+              branch = repo.get_branch(repo.default_branch)
+              
+              # Get the latest commit on the default branch
+              latest_commit = branch.commit
+              print(latest_commit)
             shell: python
         
           - name: Display Commit Changes
