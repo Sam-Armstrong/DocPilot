@@ -24,7 +24,7 @@ jobs:
         
         - name: Run Claude Script
           run: |
-            echo {{ steps.changed-files.outputs.all }}
+            echo {{fromJSON(steps.changed-files.outputs.all)}}
             echo "claude magic"
         
         - name: Cleanup Process
