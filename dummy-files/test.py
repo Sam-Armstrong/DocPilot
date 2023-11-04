@@ -214,3 +214,47 @@ def atanh(
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
     return tf.math.atanh(x)
+
+def concat(
+    xs: Union[Tuple[tf.Tensor, ...], List[tf.Tensor]],
+    /,
+    *,
+    axis: int = 0,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    is_tuple = type(xs) is tuple
+    is_axis_none = axis is None
+    if is_tuple:
+        xs = list(xs)
+    highest_dtype = xs[0].dtype
+    for i in xs:
+        highest_dtype = ivy.as_native_dtype(ivy.promote_types(highest_dtype, i.dtype))
+
+    for i in range(len(xs)):
+        if is_axis_none:
+            xs[i] = tf.reshape(xs[i], -1)
+        xs[i] = ivy.astype(xs[i], highest_dtype, copy=False).to_native()
+    if is_axis_none:
+        axis = 0
+        if is_tuple:
+            xs = tuple(xs)
+    try:
+        return tf.concat(xs, axis)
+    except (tf.errors.InvalidArgumentError, np.AxisError) as error:
+        raise ivy.utils.exceptions.IvyIndexError(error)
+
+
+def expand_dims(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    *,
+    copy: Optional[bool] = None,
+    axis: Union[int, Sequence[int]] = 0,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    try:
+        out_shape = _calculate_out_shape(axis, x.shape)
+        ret = tf.reshape(x, shape=out_shape)
+        return ret
+    except (tf.errors.InvalidArgumentError, np.AxisError) as error:
+        raise ivy.utils.exceptions.IvyIndexError(error)
