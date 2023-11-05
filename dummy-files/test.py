@@ -1348,3 +1348,7 @@ def gather_nd(
     if expand:
         out = paddle_backend.squeeze(out, axis=0)
     return out
+
+
+def hi_world():
+    pass
