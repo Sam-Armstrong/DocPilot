@@ -33,7 +33,8 @@ jobs:
 
           - name: Install Python Clients
             run: |
-              pip install anthropic, pre-commit
+              pip install anthropic
+              pip install pre-commit
 
           - name: Run Claude Magic
             run: |
