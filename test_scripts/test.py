@@ -1681,3 +1681,39 @@ def flip(
         new_axis = [item + num_dims if item < 0 else item for item in new_axis]
         ret = tf.reverse(x, new_axis)
     return ret
+
+
+def concat(
+    xs: Union[Tuple[paddle.Tensor, ...], List[paddle.Tensor]],
+    /,
+    *,
+    axis: Optional[int] = 0,
+    out: Optional[paddle.Tensor] = None,
+) -> paddle.Tensor:
+    dtypes_list = list(set(map(lambda x: x.dtype, xs)))
+    dtype = dtypes_list.pop()
+    if len(dtypes_list) > 0:
+        for d in dtypes_list:
+            dtype = ivy.promote_types(dtype, d)
+    xs = list(map(lambda x: x.cast("int32" if dtype == paddle.int16 else dtype), xs))
+    if all(0 in x.shape for x in xs):
+        shapes = [x.shape for x in xs]
+        if any(len(s) != len(shapes[0]) for s in shapes):
+            raise ivy.exceptions.IvyValueError(
+                "all the input arrays must have the same number of dimensions"
+            )
+        axis = axis + len(xs[0].shape) if axis < 0 else axis
+        sizes = [[v for i, v in enumerate(s) if i != axis] for s in shapes]
+        if any(s != sizes[0] for s in sizes):
+            raise ivy.exceptions.IvyValueError(
+                "the input arrays must have the same size along the specified axis"
+            )
+        ret = paddle.empty(
+            [*shapes[0][:axis], sum(s[axis] for s in shapes), *shapes[0][axis + 1 :]],
+            dtype=dtype,
+        )
+    else:
+        ret = paddle.concat(xs, axis=axis)
+    if dtype == paddle.int16:
+        ret = ret.cast("int16")
+    return ret
