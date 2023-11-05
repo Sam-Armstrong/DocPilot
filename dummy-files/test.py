@@ -432,5 +432,27 @@ def permute_dims(
 ) -> Union[tf.Tensor, tf.Variable]:
     return tf.transpose(x, perm=axes)
 
+@with_unsupported_dtypes({"2.13.0 and below": ("bool",)}, backend_version)
+def reshape(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    shape: Union[ivy.NativeShape, Sequence[int]],
+    *,
+    copy: Optional[bool] = None,
+    order: str = "C",
+    allowzero: bool = True,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    ivy.utils.assertions.check_elem_in_list(order, ["C", "F"])
+    if not allowzero:
+        shape = [
+            new_s if con else old_s
+            for new_s, con, old_s in zip(shape, tf.constant(shape) != 0, x.shape)
+        ]
+    if order == "F":
+        return _reshape_fortran_tf(x, shape)
+    return tf.reshape(x, shape)
+
+
 
 
