@@ -2987,7 +2987,6 @@ def fmax(
     return torch.fmax(x1, x2, out=None)
 
 
-
 @with_unsupported_dtypes({"2.0.1 and below": ("complex",)}, backend_version)
 def nansum(
     x: torch.Tensor,
@@ -2998,6 +2997,38 @@ def nansum(
     keepdims: bool = False,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
+    """Computes the sum of array elements over a given axis treating Not a
+    Numbers (NaNs) as zero.
+
+    Description: This function performs a reduction operation along the given axis, computing the sum while treating NaN (Not a Number) values as zero.
+
+    Parameters
+    ----------
+    x : Tensor
+        Input tensor containing elements to sum.
+    axis : int or tuple of ints, optional
+        Axis or axes along which the sum is performed. By default, the sum is calculated over the entire array (None).
+    dtype : dtype, optional
+        The data type of the output tensor. By default, the data type is inferred from the input tensor.
+    keepdims : bool, optional
+        If this is set to True, the reduced axes are retained as dimensions with size one in the result. By default, False.
+    out : Tensor, optional
+        Output tensor to store the result. Must have appropriate shape and dtype.
+
+    Returns
+    -------
+    Tensor
+        The sum of the input tensor with NaN values treated as zero.
+
+    Examples
+    --------
+    >>> x = torch.tensor([1, np.nan, 2, np.nan])
+    >>> torch.nansum(x)
+    tensor(3.)
+
+    >>> x = torch.tensor([[1, 2], [np.nan, 4]])
+    >>> torch.nansum(x, axis=0)
+    tensor([1., 4.])
+    """
     dtype = ivy.as_native_dtype(dtype)
     return torch.nansum(x, dim=axis, keepdim=keepdims, dtype=dtype)
-
