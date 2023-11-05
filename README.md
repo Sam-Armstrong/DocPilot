@@ -1,13 +1,13 @@
-# DocPilot - GitHub Bot for Automatic Docstring Generation
+# DocPilot - GitHub Bot for Automatic Docstring Generation 
 <p align="center"><img class="only-dark" width="35%" height="25%" src="https://github.com/Sam-Armstrong/DocPilot/blob/main/data/logo.png#gh-dark-mode-only"/></p>
 
-## Overview
+## Overview 📚
 
 This GitHub bot is designed to streamline the process of creating and maintaining docstrings for your functions. By integrating the Claude API, this bot can automatically generate informative and well-structured docstrings for your functions. Documentation is a critical aspect of code development, and this bot aims to make it easier for developers to keep their codebase well-documented.
 
-## Features
+## Features 🚀
 
-Automatic generation of docstrings for Python functions.
+Automatic generation of docstrings for Python functions/classes.
 Utilizes the Claude API to provide detailed and meaningful docstrings.
 Customizable templates and style options for generated docstrings.
 Integration with GitHub actions for continuous documentation improvement.
@@ -22,7 +22,11 @@ Before using this GitHub bot, you need to have the following:
 - A GitHub repository where you want to enable the bot.
 - Python codebase with functions that need docstrings.
 
-## Support and Contribution
+## The Road Ahead 🛠
+- extend this to other languages like Java, JavaScript, C++
+- package this into a usable marketplace Github Action
+
+## Support and Contribution 👨‍🍳
 
 If you encounter any issues or have suggestions for improving this GitHub bot, please open an issue in this repository. We welcome contributions from the open-source community.
 
