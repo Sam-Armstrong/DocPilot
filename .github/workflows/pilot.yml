@@ -58,5 +58,6 @@ jobs:
               git config --local user.email "samuel_e_armstrong@yahoo.co.uk"
               git config --local user.name "Sam-Armstrong"
               pre-commit run -a
+              git add .
               git commit -m "add docstring"
               git push
