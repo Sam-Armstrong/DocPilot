@@ -79,34 +79,6 @@ def multinomial(
     seed: Optional[int] = None,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
-"""
-Draws samples from a multinomial distribution.
-
-Parameters
-----------
-population_size : int
-    The size of the distribution population. 
-num_samples : int 
-    Number of samples to draw.
-batch_size : int, optional
-    Number of independent distributions (default is 1).
-probs : tf.Tensor, optional 
-    The class probabilities or unnormalized log probabilities, typically one row per class. Defaults to a uniform distribution over classes.
-replace : bool, optional
-    Whether the sample is with or without replacement (default is True, i.e., with replacement).
-device : str, optional
-    device on which to create the array 'cuda:0', 'cuda:1', 'cpu' etc. (Default: cpu)
-seed : int, optional 
-    Random seed (default is None, which means no seed is set).
-out : tf.Tensor or tf.Variable, optional
-    Optional output array, for writing the result to. It must have a shape that the 
-    inputs broadcast to.
-
-Returns
--------
-ret: tf.Tensor
-    The drawn samples, of shape batch_size x num_samples. 
-"""
     if probs is None:
         probs = (
             tf.ones(
@@ -148,5 +120,46 @@ ret: tf.Tensor
         if len(probs.numpy().shape) == 1:
             probs = tf.expand_dims(probs, axis=0)
         return tf.random.categorical(tf.math.log(probs), num_samples)
+
+
+def randint(
+    low: Union[float, tf.Tensor, tf.Variable],
+    high: Union[float, tf.Tensor, tf.Variable],
+    /,
+    *,
+    shape: Optional[Union[ivy.NativeShape, Sequence[int]]] = None,
+    device: str = None,
+    dtype: Optional[Union[DType, ivy.Dtype]] = None,
+    seed: Optional[int] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    if not dtype:
+        dtype = ivy.default_int_dtype()
+    dtype = ivy.as_native_dtype(dtype)
+    _randint_check_dtype_and_bound(low, high, dtype)
+    shape = _check_bounds_and_get_shape(low, high, shape).shape
+    low = tf.cast(low, "float32")
+    high = tf.cast(high, "float32")
+    if seed:
+        tf.random.set_seed(seed)
+    return tf.cast(tf.random.uniform(shape, low, high, "float32", seed=seed), dtype)
+
+
+def seed(*, seed_value: int = 0) -> None:
+    tf.random.set_seed(seed_value)
+    return
+
+
+def shuffle(
+    x: Union[tf.Tensor, tf.Variable],
+    axis: Optional[int] = 0,
+    /,
+    *,
+    seed: Optional[int] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    if seed:
+        tf.random.set_seed(seed)
+    return tf.random.shuffle(x, seed=seed)
 
 
