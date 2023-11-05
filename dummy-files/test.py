@@ -290,11 +290,6 @@ def eye(
         return paddle.zeros(batch_shape + [n_rows, n_cols], dtype=dtype)
 
 
-
-def to_dlpack(x, /, *, out: Optional[paddle.Tensor] = None):
-    return paddle.utils.dlpack.to_dlpack(x)
-
-
 def from_dlpack(x, /, *, out: Optional[paddle.Tensor] = None):
     return paddle.utils.dlpack.from_dlpack(x)
 
@@ -398,4 +393,5 @@ def linspace(
     return ans.cast(dtype)
 
 
-
+def to_dlpack(x, /, *, out: Optional[paddle.Tensor] = None):
+    return paddle.utils.dlpack.to_dlpack(x)
