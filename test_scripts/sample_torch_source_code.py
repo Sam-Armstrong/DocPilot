@@ -2987,33 +2987,17 @@ def fmax(
     return torch.fmax(x1, x2, out=None)
 
 
-# no docstring
-def count_nonzero(
-    a: torch.Tensor,
+
+@with_unsupported_dtypes({"2.0.1 and below": ("complex",)}, backend_version)
+def nansum(
+    x: torch.Tensor,
     /,
     *,
-    axis: Optional[Union[int, Tuple[int, ...]]] = None,
-    keepdims: bool = False,
+    axis: Optional[Union[Tuple[int, ...], int]] = None,
     dtype: Optional[torch.dtype] = None,
+    keepdims: bool = False,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    if isinstance(axis, list):
-        axis = tuple(axis)
-    if dtype is None:
-        x = torch.count_nonzero(a, dim=axis)
-    else:
-        x = torch.tensor(torch.count_nonzero(a, dim=axis), dtype=dtype)
-    if not keepdims:
-        return x
-    if isinstance(axis, int):
-        if axis == -1:
-            temp = x.dim() - 1
-            if temp < -1:
-                temp = 0
-            return x.unsqueeze(temp)
-        return x.unsqueeze(axis)
-    elif axis is not None:
-        for d in sorted(axis):
-            x = x.unsqueeze(d)
-        return x
-    return x
+    dtype = ivy.as_native_dtype(dtype)
+    return torch.nansum(x, dim=axis, keepdim=keepdims, dtype=dtype)
+
