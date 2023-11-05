@@ -6,7 +6,7 @@ repos:
       - id: check-toml
       - id: end-of-file-fixer
         exclude: ^.*yml$
-        
+
   - repo: https://github.com/psf/black-pre-commit-mirror
     rev: 23.9.1
     hooks:

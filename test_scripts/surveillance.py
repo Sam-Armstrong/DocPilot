@@ -75,10 +75,40 @@ fat = 0
 
 
 def get_current_value1():
+    """Gets the current value of the slider1 widget.
+
+    This function returns the integer value of the slider1 widget, which controls
+    the dilation parameter in the image processing pipeline.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    int
+        The integer value of the slider1 widget, representing the dilation parameter.
+
+    """
     return int("{}".format(current_value1.get()))
 
 
 def slider_changed1(event):
+    """Updates the text label with the current value when the slider is changed.
+
+    The slider_changed1 function is called whenever the slider1 widget
+    is moved to update the text label showing the current slider value.
+
+    Parameters
+    ----------
+    event : tkinter event
+        The slider movement event triggered when the slider value changes.
+
+    Returns
+    -------
+    None
+
+    """
     value_label1.configure(text=get_current_value1())
 
 
@@ -100,10 +130,40 @@ value_label1.place(x=995, y=52)
 
 
 def get_current_value2():
+    """Gets the current value of variable current_value2.
+
+    This function is used to retrieve the integer value of the
+    current_value2 variable, which controls the erosion slider in the GUI.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    int
+        The current integer value of current_value2.
+
+    """
     return int("{}".format(current_value2.get()))
 
 
 def slider_changed2(event2):
+    """Updates the text label with the current value when the slider is changed.
+
+    This function is called whenever the slider2 widget is moved to update the
+    text label displaying the current value.
+
+    Parameters
+    ----------
+    event2 : tkinter event
+        The slider event that triggered the callback.
+
+    Returns
+    -------
+    None
+
+    """
     value_label2.configure(text=get_current_value2())
 
 
@@ -213,6 +273,28 @@ ip_add_entry = StringVar()
 
 
 def open_popup():
+    """Opens a new popup window to receive video source input from the user.
+
+    This function creates a new Toplevel window for the user to specify the
+    video source. It contains widgets to enter login credentials for an IP camera
+    stream, or select local file browsing.
+
+    The popup window allows the user to switch the `flag_for_browse` boolean
+    to indicate if they want to browse local files rather than stream from IP camera.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    The function does not return anything, but modifies global state by creating
+    the popup window and allowing the user to update the `flag_for_browse` variable.
+
+    It also allows setting the global `path` variable to the selected video source.
+    """
     global top
     top = Toplevel(window)
     top.geometry("350x250")
@@ -251,12 +333,57 @@ def open_popup():
 
 
 def switch_flag_for_browse():
+    """Switches the flag_for_browse boolean variable to True.
+
+    This function is used to toggle the flag_for_browse variable from False to True
+    when the user selects the 'Browse Files' radio button in the popup window.
+
+    Switching this flag to True indicates that the user wants to select a video
+    file to analyze rather than connecting to an IP camera stream.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Modifies
+    --------
+    flag_for_browse : bool
+        Sets this global variable to True after function call
+    """
     global flag_for_browse
     flag_for_browse = True
     print("FLAG FOR BROWSE SWITCHED")
 
 
 def browseFiles():
+    """Browse for a file and return the file path.
+
+    Allows the user to browse files on their local system using a filedialog
+    popup. When a file is selected by the user, the full path to that file is
+    returned.
+
+    Parameters
+    ----------
+    initialdir : str, optional
+        The initial directory to open the filedialog in. Defaults to '/'
+    title : str, optional
+        The title at the top of the filedialog window. Defaults to 'Select a File'
+    filetypes : list of tuples, optional
+        Allowed file types in the form [(label1, ext1), (label2, ext2)].
+        Defaults to [('All Files','.*')] which allows any file type.
+    parent : tkinter widget, optional
+        The parent widget for the filedialog. Defaults to window.
+
+    Returns
+    -------
+    str
+        The full path to the selected file.
+
+    """
     source_file = filedialog.askopenfilename(
         initialdir="/",
         title="Select a File",
@@ -270,6 +397,37 @@ def browseFiles():
 
 
 def submit():
+    """Submit IP camera login credentials to get video stream path.
+
+    This function takes the username, password, and IP address entered by the user
+    in the popup GUI window and constructs a video stream path url. It then sets
+    the global path variable to this url so that it can be used for video capture.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    Modifies
+    --------
+    path : str
+        Sets the global path variable to the contructed video stream url.
+
+    un_entry : StringVar
+        Clears the username text box in the GUI.
+
+    passwd_entry : StringVar
+        Clears the password text box in the GUI.
+
+    ip_add_entry : StringVar
+        Clears the IP address text box in the GUI.
+
+    top : Toplevel widget
+        Destroys the popup GUI window.
+    """
     global path
     un = un_entry.get()
     pw = passwd_entry.get()
@@ -285,6 +443,23 @@ def submit():
 
 
 def loadVideo(videopath):
+    """Loads a video from a given path and returns a list of grayscale image frames.
+
+    This function takes in a video path, opens the video capture, reads frames one by one,
+    converts each frame to grayscale, and appends it to a list. This list of grayscale frames
+    is then returned.
+
+    Parameters
+    ----------
+    videopath : str
+        Path to the video file to load
+
+    Returns
+    -------
+    list
+        List of grayscale image frames from the video
+
+    """
     global frame_width, frame_height
     ImagesSequence = []
     i = 0
@@ -311,6 +486,29 @@ def loadVideo(videopath):
 
 
 def write_video(frames_list, fps, type, detur=False):
+    """Writes a video file from a list of image frames.
+
+    This function takes a list of NumPy arrays representing image frames, along with framerate,
+    video type, and detur boolean, and writes the frames into a video file.
+
+    Parameters
+    ----------
+    frames_list : list
+        List containing NumPy arrays representing successive video frames
+    fps : float
+        Framerate to write the video at
+    type : str
+        File extension for the video format (e.g. 'mp4')
+    detur : bool, optional
+        Whether to convert frames to color before writing, by default False
+
+    Returns
+    -------
+    None
+
+    Writes the video file to disk.
+
+    """
     if detur:
         Frames_BGR = [cv2.cvtColor(Frame, cv2.COLOR_GRAY2BGR) for Frame in frames_list]
     displayVarPath.set(str(f"{out_path}/{type}.mp4"))
@@ -329,6 +527,25 @@ def write_video(frames_list, fps, type, detur=False):
 
 
 def toggleCapture():
+    """Toggle video capture on or off.
+
+    This function is used to start or stop video capture from the input source (webcam or video file).
+    It initializes and opens the VideoCapture object if it is not already open,
+    and releases it if it is already open.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    It operates by setting the global capture variable and path variable to the video source,
+    and releases the capture if it is already open. This allows the user to toggle between
+    capturing frames for processing and stopping capture.
+
+    """
     try:
         global capture
         global path
@@ -342,6 +559,27 @@ def toggleCapture():
 
 
 def objdetect():
+    """
+    Performs object detection on video frames using background subtraction and contour detection.
+
+    Reads video frames from a VideoCapture object, performs background subtraction between consecutive frames to identify moving objects, finds contours in the foreground mask to identify object regions, and draws green rectangles around detected objects in each frame.
+
+    Parameters
+    ----------
+    - None
+
+    Returns
+    -------
+    None
+
+    The function operates by side effect - it appends object detected frames to a global 'object_frames' list.
+
+    It also tracks and displays the FPS and frame processing time.
+
+    The background subtraction parameters like blur, dilation, erosion etc. can be controlled via global variables. Contour drawing is controlled via a global flag.
+
+    The function keeps reading frames until the 'q' key is pressed, at which point it releases the VideoCapture, destroys windows and returns.
+    """
     global iterFPS
     global object_frames
     isVideoCaptureOpen = True
@@ -417,6 +655,23 @@ def objdetect():
 
 
 def deturbulence():
+    """
+    Performs turbulence mitigation on a video stream.
+
+    Reads in frames from a video stream, registers the frames to reduce effects of turbulence,
+    and performs deblurring on a region of interest. The enhanced frames are displayed.
+
+    Parameters
+    ----------
+    path : str
+        The path to the video file or stream.
+
+    Returns
+    -------
+    None
+        The function does not return anything, it displays the enhanced frames.
+
+    """
     try:
         global path
         if flag_for_browse:
@@ -587,6 +842,23 @@ def deturbulence():
 
 
 def endeturbulence():
+    """
+    Performs turbulence mitigation on a video stream.
+
+    Reads in frames from a video stream, registers the frames to reduce effects of turbulence,
+    and performs deblurring on a region of interest. The enhanced frames are displayed.
+
+    Parameters
+    ----------
+    path : str
+        The path to the video file or stream.
+
+    Returns
+    -------
+    None
+        The function does not return anything, it displays the enhanced frames.
+
+    """
     global path
     if flag_for_browse:
         path = browseFiles()
@@ -788,6 +1060,23 @@ def endeturbulence():
 
 
 def endeturbulence_old_version():
+    """
+    Performs turbulence mitigation on a video stream.
+
+    Reads in frames from a video stream, registers the frames to reduce effects of turbulence,
+    and performs deblurring on a region of interest. The enhanced frames are displayed.
+
+    Parameters
+    ----------
+    path : str
+        The path to the video file or stream.
+
+    Returns
+    -------
+    None
+        The function does not return anything, it displays the enhanced frames.
+
+    """
     source_file = browseFiles()
     dataType = np.float32
     N_FirstReference = 10
@@ -980,6 +1269,34 @@ def endeturbulence_old_version():
 
 
 def deturbWithObjDetec():
+    """
+    Performs turbulence mitigation on input video and runs object detection on the enhanced video.
+
+    This function takes video input, performs iterative turbulence mitigation on each frame
+    to enhance the video quality. It then runs object detection on the enhanced frames
+    to identify and highlight objects in the video.
+
+    The turbulence mitigation includes steps like:
+      - Registration of frames
+      - Deblurring using wiener filter
+
+    The object detection steps include:
+      - Background subtraction
+      - Morphological operations
+      - Contour detection
+      - Drawing bounding boxes around objects
+
+    The enhanced and object detected frames are displayed in the GUI window, and also saved to video file.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    None
+
+    """
     try:
         global path
         if flag_for_browse:
