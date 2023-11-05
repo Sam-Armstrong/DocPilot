@@ -37,7 +37,7 @@ jobs:
               import json
               import os
               home_dir = os.path.expanduser("~")
-              with open(home_dir + '/files.json', r) as f:
+              with open(home_dir + '/files.json', 'r') as f:
                 data = json.load(f)
               print(data)
               
