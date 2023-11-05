@@ -9,6 +9,46 @@ def one_hot(
     axis=None,
     dtype=None,
 ):
+    """Convert indices into a one-hot representation.
+
+    Parameters
+    ----------
+    indices : array_like
+        Integer array containing indices to convert to one-hot.
+    depth : int
+        Size of one hot dimension for encoding indices.
+    on_value : float, optional
+        Value to fill in output when indices[i] = j. Default is None.
+    off_value : float, optional
+        Value to fill in output when indices[i] != j. Default is None.
+    axis : int, optional
+        Axis along which one-hot representation is concatenated. Default is None.
+    dtype : numpy dtype, optional
+        Data type of the one-hot array. Default is None.
+
+    Returns
+    -------
+    res : ndarray
+        One-hot representation of input indices.
+
+    Examples
+    --------
+    >>> indices = [0, 1, 2]
+    >>> one_hot(indices, depth=3)
+    array([[1., 0., 0.],
+           [0., 1., 0.],
+           [0., 0., 1.]])
+
+    >>> one_hot(indices, depth=3, on_value=5)
+    array([[5., 0., 0.],
+           [0., 5., 0.],
+           [0., 0., 5.]])
+
+    >>> one_hot(indices, depth=3, off_value=-1)
+    array([[ 1., -1., -1.],
+           [-1.,  1., -1.],
+           [-1., -1.,  1.]])
+    """
     on_none = on_value is None
     off_none = off_value is None
 
