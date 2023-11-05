@@ -505,9 +505,16 @@ def stack(
         return tf.experimental.numpy.stack(arrays, axis)
     except ValueError as e:
         raise ivy.utils.exceptions.IvyIndexError(e)
-    
-    
 
 
-
+@with_supported_dtypes({"2.13.0 and below": ("int32", "int64")}, backend_version)
+def repeat(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    repeats: Union[int, List[int]],
+    *,
+    axis: int = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    return tf.repeat(x, repeats, axis)
 
