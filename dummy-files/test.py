@@ -79,6 +79,34 @@ def multinomial(
     seed: Optional[int] = None,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
+"""
+Draws samples from a multinomial distribution.
+
+Parameters
+----------
+population_size : int
+    The size of the distribution population. 
+num_samples : int 
+    Number of samples to draw.
+batch_size : int, optional
+    Number of independent distributions (default is 1).
+probs : tf.Tensor, optional 
+    The class probabilities or unnormalized log probabilities, typically one row per class. Defaults to a uniform distribution over classes.
+replace : bool, optional
+    Whether the sample is with or without replacement (default is True, i.e., with replacement).
+device : str, optional
+    device on which to create the array 'cuda:0', 'cuda:1', 'cpu' etc. (Default: cpu)
+seed : int, optional 
+    Random seed (default is None, which means no seed is set).
+out : tf.Tensor or tf.Variable, optional
+    Optional output array, for writing the result to. It must have a shape that the 
+    inputs broadcast to.
+
+Returns
+-------
+ret: tf.Tensor
+    The drawn samples, of shape batch_size x num_samples. 
+"""
     if probs is None:
         probs = (
             tf.ones(
