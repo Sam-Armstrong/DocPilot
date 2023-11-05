@@ -1,0 +1,33 @@
+name: Generate and Deploy Documentation
+
+on: [workflow_call]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Specify your desired Python version
+
+      - name: Install Sphinx and Dependencies
+        run: pip install sphinx sphinx-rtd-theme
+
+      - name: Generate Documentation
+        run: |
+          cd DocPilot
+          sphinx quickstart
+          cd docs
+          sphinx-apidoc -o source/ ../DocPilot/
+          make html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/_build/html

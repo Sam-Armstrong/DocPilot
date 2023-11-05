@@ -6,7 +6,7 @@ permissions:
     contents: write
 
 jobs:
-  add-docstring:
+  run-docstring-integration:
         runs-on: ubuntu-latest
         steps:
           - uses: actions/checkout@v2
@@ -29,7 +29,6 @@ jobs:
             run: |
               pip install anthropic
               pip install pre-commit
-              pip install autopep8
 
           - name: Run Claude Magic
             run: |
@@ -37,7 +36,7 @@ jobs:
               python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
               rm -rf diff.txt temp.txt
 
-          - name: Check if there are changes 📝
+          - name: Check for changes 📝
             id: check
             run: |
                 cd DocPilot
@@ -51,7 +50,7 @@ jobs:
               cd DocPilot
               pre-commit run -a
 
-          - name: Set up Git
+          - name: Set up Bot Credentials
             run: |
               git config --global user.email "actions@github.com"
               git config --global user.name "GitHub Actions"
@@ -59,7 +58,7 @@ jobs:
               git config --global core.askPass ""
 
 
-          - name: Update file with Docstring
+          - name: Add Docstring to files
             if: steps.check.outputs.changes == 'true'
             run: |
               cd DocPilot
@@ -67,3 +66,9 @@ jobs:
               git add .
               git commit -m "add docstring"
               git push
+
+  add-documentation:
+    name: trigger doc-builder for project
+    uses: ./.github/workflows/doc-builder.yml
+    needs: run-docstring-integration
+
