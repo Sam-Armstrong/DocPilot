@@ -349,6 +349,38 @@ def split(
     with_remainder: bool = False,
 ) -> Union[tf.Tensor, tf.Variable]:
     if x.shape == ():
+ Here is the docstring for the split function:
+
+```python
+"""
+Split array into multiple sub-arrays along given axis. 
+
+Parameters
+----------
+x: Union[tf.Tensor, tf.Variable]
+    Tensor to be split.
+copy: Optional[bool]
+    Default is None. If true, make a copy of array before split.
+num_or_size_splits: Optional[Union[int, Sequence[int], Union[tf.Tensor, tf.Variable]]]
+    Either number of evenly sized splits or sequence of sizes for each split along axis. Default is None, which splits into as many even sized splits as possible along axis.
+axis: int
+    Axis along which to split. Default is 0.
+with_remainder: bool  
+    If true, allow uneven splits such that each split is at least 1 in size along axis. Default is False.
+     
+Returns
+-------
+Union[tf.Tensor, tf.Variable]
+    List of sub-arrays.
+
+Raises
+------
+IvyException
+    If input array had no shape but num_sections was specified.
+IvyIndexError  
+    If split was not possible along specified axis.
+"""
+```
         if num_or_size_splits is not None and num_or_size_splits != 1:
             raise ivy.utils.exceptions.IvyException(
                 "input array had no shape, but num_sections specified was"
