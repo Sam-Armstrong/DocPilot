@@ -2,9 +2,6 @@ from anthropic import Anthropic
 import fileinput
 
 
-filename = "dummy-files/test.py"
-
-
 def _extract_relevant_info(text):
     start_index = text.find('"""')
     if start_index != -1:
