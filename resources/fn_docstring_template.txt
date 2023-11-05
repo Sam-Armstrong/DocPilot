@@ -25,6 +25,12 @@ OtherError
 Examples
 --------
 Some minimal examples of using the function should go here, something like:
+>>> x = torch.add(torch.tensor([1, 2]), torch.tensor([3, 4]))
+>>> x
+tensor([4, 6])
+>>> x.shape
+torch.Size([2])
+
 >>> torch.add(torch.tensor([1, 2]), torch.tensor([3, 4]))
 tensor([4, 6])
 
