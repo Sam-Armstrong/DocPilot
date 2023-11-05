@@ -3,15 +3,16 @@
 
 ## Overview 📚
 
-This GitHub bot is designed to streamline the process of creating and maintaining docstrings for your functions. By integrating the Claude API, this bot can automatically generate informative and well-structured docstrings for your functions. Documentation is a critical aspect of code development, and this bot aims to make it easier for developers to keep their codebase well-documented.
+This GitHub bot is designed to streamline the process of writing meaningful docstrings and maintaining good clean code. By integrating the Claude API, this bot can automatically generate informative and well-structured docstrings for your functions. 
+Documentation is a critical aspect of code development, and this bot aims to make it easier for developers to keep their codebase well-documented and organized.
 
-## Features 🚀
+## Features 📌
 
-Automatic generation of docstrings for Python functions/classes.
-Utilizes the Claude API to provide detailed and meaningful docstrings.
-Customizable templates and style options for generated docstrings.
-Integration with GitHub actions for continuous documentation improvement.
-Support for a wide range of programming paradigms and Python versions.
+- Automatic generation🚀 of docstrings for Python functions/classes. 
+- Utilizes the Claude 2.0 to provide detailed and meaningful docstrings.
+- Customizable templates and style options for generated docstrings.
+- Uses linters like black, flake-8, autopep8 to clean code.
+- Integration with GitHub CI for continuous documentation improvement.
 
 ## Getting Started
 
