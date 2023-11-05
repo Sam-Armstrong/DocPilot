@@ -10,9 +10,19 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../test_scripts'))
+
+extensions = [
+    'sphinx.ext.autodoc',
+    # ... other extensions
+]
+
+# Add the module names or patterns that you want to document
+autodoc_mock_imports = [
+    'dummy-test.py',
+]
 
 
 # -- Project information -----------------------------------------------------
