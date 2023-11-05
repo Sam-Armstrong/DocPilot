@@ -1,0 +1,44 @@
+diff --git a/.github/workflows/pilot.yml b/.github/workflows/pilot.yml
+index 7f5de77..e261869 100644
+--- a/.github/workflows/pilot.yml
++++ b/.github/workflows/pilot.yml
+@@ -42,6 +42,7 @@ jobs:
+           - name: Check if there are changes 📝
+             id: check
+             run: |
++                cd DocPilot
+                 if [[ -n "$(git status --porcelain)" ]]; then
+                   echo "changes=true" >> $GITHUB_OUTPUT
+                 fi
+@@ -49,6 +50,7 @@ jobs:
+           - name: Update file with Docstring
+             if: steps.check.outputs.changes == 'true'
+             run: |
++              cd DocPilot
+               git config --local user.email "samuel_e_armstrong@yahoo.co.uk"
+               git config --local user.name "Sam-Armstrong"
+               git add .
+diff --git a/dummy-files/test.py b/dummy-files/test.py
+index dac689f..03f05aa 100644
+--- a/dummy-files/test.py
++++ b/dummy-files/test.py
+@@ -323,3 +323,18 @@ def roll(
+             shift = [shift for _ in range(len(axis))]
+         ret = tf.roll(x, shift, axis)
+     return ret
++
++@with_unsupported_dtypes({"2.13.0 and below": ("bfloat16",)}, backend_version)
++def stack(
++    arrays: Union[Tuple[tf.Tensor], List[tf.Tensor]],
++    /,
++    *,
++    axis: int = 0,
++    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
++) -> Union[tf.Tensor, tf.Variable]:
++    try:
++        return tf.experimental.numpy.stack(arrays, axis)
++    except ValueError as e:
++        raise ivy.utils.exceptions.IvyIndexError(e)
++    
++    
+\ No newline at end of file
