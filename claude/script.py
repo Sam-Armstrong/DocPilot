@@ -37,9 +37,8 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
-    print(_extract_relevant_info(completion.completion))
-    print("\n")
     docstring = _extract_relevant_info(completion.completion)
+    docstring = docstring.replace("\n", "\n    ")
     return docstring + "\n"
 
 def add_docstring(key):
@@ -53,9 +52,9 @@ def add_docstring(key):
         in_func = False
         for i, line in enumerate(content):
             line = line.decode('utf-8')  # Decode the bytes to a string
-            if line.startswith("+def "):
+            if line.replace(' ', '').startswith("+def"):
                 in_func = True
-                func_name = line.split('+def ')[1].split('(')[0]
+                func_name = line.replace(' ', '').split('+def')[1].split('(')[0]
                 # regex to check if there exists a docstring
             if line.replace(' ', '') == '+\n' or line.replace(' ', '') == '\n' or i == len(content) - 1:
                 if in_func and not contains_docstring:

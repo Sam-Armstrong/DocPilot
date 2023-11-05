@@ -462,16 +462,6 @@ def flip(
     return ret
 
 
-def permute_dims(
-    x: Union[tf.Tensor, tf.Variable],
-    /,
-    axes: Tuple[int, ...],
-    *,
-    copy: Optional[bool] = None,
-    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
-) -> Union[tf.Tensor, tf.Variable]:
-    return tf.transpose(x, perm=axes)
-
 @with_unsupported_dtypes({"2.13.0 and below": ("bool",)}, backend_version)
 def reshape(
     x: Union[tf.Tensor, tf.Variable],
@@ -507,14 +497,15 @@ def stack(
         raise ivy.utils.exceptions.IvyIndexError(e)
 
 
-@with_supported_dtypes({"2.13.0 and below": ("int32", "int64")}, backend_version)
-def repeat(
+def permute_dims(
     x: Union[tf.Tensor, tf.Variable],
     /,
-    repeats: Union[int, List[int]],
+    axes: Tuple[int, ...],
     *,
-    axis: int = None,
+    copy: Optional[bool] = None,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
-    return tf.repeat(x, repeats, axis)
+    return tf.transpose(x, perm=axes)
+
+
 
