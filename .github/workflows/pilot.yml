@@ -33,7 +33,7 @@ jobs:
           - name: Run Claude Magic
             run: |
               cd DocPilot
-              python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
+              python3 src/integration.py ${{secrets.ANTHROPIC_API_KEY}}
               rm -rf diff.txt temp.txt
 
           - name: Check for changes 📝
