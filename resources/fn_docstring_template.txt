@@ -31,9 +31,11 @@ tensor([4, 6])
 >>> x.shape
 torch.Size([2])
 
->>> torch.add(torch.tensor([1, 2]), torch.tensor([3, 4]))
-tensor([4, 6])
-
->>> seqential_list(1, 5)
+>>> seq_list = seqential_list(1, 5)
+>>> seq_list
 [1, 2, 3, 4]
+>>> len(seq_list)
+4
+>>> min(seq_list)
+1
 """
