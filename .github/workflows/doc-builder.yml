@@ -7,8 +7,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Repository
         uses: actions/checkout@v2
+        with:
+            token: ${{secrets.GITHUB_TOKEN}}
+            path: DocPilot
+            submodules: "recursive"
+            ref: ${{github.head_ref}}
+            fetch-depth: 100
 
       - name: Set up Python
         uses: actions/setup-python@v2
