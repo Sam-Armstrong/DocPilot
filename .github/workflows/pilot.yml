@@ -35,7 +35,9 @@ jobs:
             shell: python
             run: |
               import json
-              with open(./files.json, r) as f:
+              import os
+              home_dir = os.path.expanduser("~")
+              with open(home_dir + '/files.json', r) as f:
                 data = json.load(f)
               print(data)
               
