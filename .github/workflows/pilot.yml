@@ -33,7 +33,7 @@ jobs:
 
           - name: Install Python Clients
             run: |
-              pip install anthropic
+              pip install anthropic, pre-commit
 
           - name: Run Claude Magic
             run: |
@@ -43,9 +43,9 @@ jobs:
 
           - name:  Run pre-commit 🚀
             continue-on-error: true
-            uses: pre-commit/action@v3.0.0
-            with:
-              extra_args: ${{join(fromJSON(steps.changed-files.outputs.all), ' ')}}
+            run:
+              cd DocPilot
+              pre-commit run -a $changed_files
 
           - name: Check if there are changes 📝
             id: check
