@@ -2947,6 +2947,7 @@ def real(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Ten
     """
     return torch.real(x)
 
+
 @with_unsupported_dtypes({"2.0.1 and below": ("complex",)}, backend_version)
 def fmax(
     x1: torch.Tensor,
@@ -2955,5 +2956,32 @@ def fmax(
     *,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
+    """Computes the element-wise maximum of two tensors.
+
+    This compares two tensors element-wise and returns a new tensor
+    containing the maximum value from each pair of elements.
+
+    Parameters
+    ----------
+    x1 : torch.Tensor
+        The first input tensor.
+    x2 : torch.Tensor
+        The second input tensor. Must be able to broadcast with x1.
+
+    out : Optional[torch.Tensor], optional
+        Output tensor. By default None.
+
+    Returns
+    -------
+    torch.Tensor
+        The element-wise maximum of x1 and x2.
+
+    Examples
+    --------
+    >>> x = torch.tensor([1, 2, 3])
+    >>> y = torch.tensor([3, 2, 1])
+    >>> fmax(x, y)
+    tensor([3, 2, 3])
+    """
     x1, x2 = promote_types_of_inputs(x1, x2)
     return torch.fmax(x1, x2, out=None)
