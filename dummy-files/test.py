@@ -336,5 +336,39 @@ def stack(
         return tf.experimental.numpy.stack(arrays, axis)
     except ValueError as e:
         raise ivy.utils.exceptions.IvyIndexError(e)
-    
-    
+
+def split(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    *,
+    copy: Optional[bool] = None,
+    num_or_size_splits: Optional[
+        Union[int, Sequence[int], Union[tf.Tensor, tf.Variable]]
+    ] = None,
+    axis: int = 0,
+    with_remainder: bool = False,
+) -> Union[tf.Tensor, tf.Variable]:
+    if x.shape == ():
+        if num_or_size_splits is not None and num_or_size_splits != 1:
+            raise ivy.utils.exceptions.IvyException(
+                "input array had no shape, but num_sections specified was"
+                f" {num_or_size_splits}"
+            )
+        return [x]
+    if num_or_size_splits is None:
+        dim_size = tf.shape(x)[axis]
+        num_or_size_splits = int(dim_size)
+    if isinstance(num_or_size_splits, (tf.Tensor, tf.Variable)):
+        num_or_size_splits = tf.cast(num_or_size_splits, tf.int32)
+        num_or_size_splits = num_or_size_splits.numpy().tolist()
+    elif isinstance(num_or_size_splits, int) and with_remainder:
+        num_chunks = x.shape[axis] / num_or_size_splits
+        num_chunks_int = math.floor(num_chunks)
+        remainder = num_chunks - num_chunks_int
+        if remainder != 0:
+            num_or_size_splits = [num_or_size_splits] * num_chunks_int + [
+                int(remainder * num_or_size_splits)
+            ]
+
+    return tf.split(x, num_or_size_splits, axis)
+
