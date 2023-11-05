@@ -1,14 +1,6 @@
 """
 Description of the class.
 
-Parameters
-----------
-param1 : type
-    Description of the first parameter.
-param2 : type
-    Description of the second parameter.
-...
-
 Attributes
 ----------
 attr1 : type
@@ -25,26 +17,13 @@ method2(param1, param2):
     Description of the second method.
 ...
 
-Properties
-----------
-property1 : type
-    Description of the first property.
-property2 : type
-    Description of the second property.
-...
-
-Notes
------
-Additional notes and information about the class.
-
 Examples
 --------
-Example usage of the class:
+Some minimal examples of using the function should go here, something like:
+>>> torch.add(torch.tensor([1, 2]), torch.tensor([3, 4]))
+tensor([4, 6])
 
-```python
-obj = ClassName(param1, param2)
-obj.method1(arg1, arg2)
-...
-```
-
+>>> obj = ClassName(param1, param2)
+>>> obj.add(arg1)
+obj + arg1
 """
