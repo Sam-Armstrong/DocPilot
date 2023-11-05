@@ -91,19 +91,11 @@ def merge_docstring(fns_without_docstring):
     
     docstring_placement = dict(sorted(docstring_placement.items()))  # sort docstring placements
 
-    accumulated_shift = 0
-    modified_docstring_placement = {}
-    for i, (ln_num, docstring) in enumerate(docstring_placement.items()):
-        new_ln_num = ln_num + i + accumulated_shift
-        modified_docstring_placement[new_ln_num] = docstring
-        accumulated_shift += docstring.count("\n") + 1
-    # TODO: test the shift here is correct with many docstrings being added
-
     with fileinput.input(files=(filename,), inplace=True) as file:
         for line_num, line in enumerate(file, start=1):
             # Check if this line should have content added
-            if line_num in modified_docstring_placement:
-                content_to_add = modified_docstring_placement[line_num]
+            if line_num in docstring_placement:
+                content_to_add = docstring_placement[line_num]
                 print(content_to_add, end='')
             print(line, end='')
 
