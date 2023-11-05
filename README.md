@@ -1,4 +1,4 @@
-# DocPilot - GitHub Bot for Automatic Docstring Generation
+# DocPilot: Enhancing Developer Workflow !
 <p align="center"><img class="only-dark" width="35%" height="25%" src="https://github.com/Sam-Armstrong/DocPilot/blob/main/data/logo.png#gh-dark-mode-only"/></p>
 
 ## Overview 📚
