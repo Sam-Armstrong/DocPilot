@@ -82,6 +82,24 @@ def add_docstring(key):
 
 
 def merge_docstring(file_fns_without_docstring):
+    """
+    Merges generated docstrings into the original files.
+    
+    This function takes the dictionary of filenames and functions without docstrings, 
+    iterates through each file, and inserts the generated docstring at the appropriate place.
+    
+    Parameters
+    ----------
+    file_fns_without_docstring : dict
+        A dictionary with filenames as keys, and dictionaries as values. The inner dict has
+        function names without docstrings as keys, and the generated docstring as values.
+    
+    Returns
+    -------
+    None
+        The function edits the files in place.
+    
+    """
     for filename, fns_without_docstring in file_fns_without_docstring.items():
         with open(filename, '+rb') as f:
             content = f.readlines()

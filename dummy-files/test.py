@@ -1375,6 +1375,23 @@ def inplace_increment(
     x: Union[ivy.Array, paddle.Tensor],
     val: Union[ivy.Array, paddle.Tensor],
 ) -> ivy.Array:
+    """Inplace increments x by val.
+    
+    Increments x in-place by val. Both x and val must be arrays or tensors.
+    
+    Parameters
+    ----------
+    x : array_like
+        Input array to be incremented.
+    val : array_like
+        Array containing values to increment x by.
+        
+    Returns
+    -------  
+    ivy.Array
+        x incremented in-place by val.
+    
+    """
     (x_native, val_native), _ = ivy.args_to_native(x, val)
     if ivy.is_ivy_array(x):
         target = x.data
@@ -1390,6 +1407,30 @@ def inplace_update(
     ensure_in_backend: bool = False,
     keep_input_dtype: bool = False,
 ) -> ivy.Array:
+    """
+    Updates the array x inplace with the values from array val.
+    
+    Parameters
+    ----------
+    x : array_like
+        The array to update inplace.
+    val : array_like
+        The array containing the values to update x with.
+    ensure_in_backend : bool, optional
+        If True, ensures the updated x is in the backend framework. Default is False.
+    keep_input_dtype : bool, optional  
+        If True, keeps the dtype of x the same after the update. Default is False.
+    
+    Returns
+    -------
+    x : array_like
+        The updated array x.
+    
+    Raises
+    ------
+    ValueError
+        If x is not an array. 
+    """
     _check_inplace_update_support(x, ensure_in_backend)
     if ivy.is_array(x) and ivy.is_array(val):
         (x_native, val_native), _ = ivy.args_to_native(x, val)
