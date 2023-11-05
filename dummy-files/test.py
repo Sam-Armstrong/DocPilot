@@ -507,8 +507,11 @@ def stack(
 
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 << << << < Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
 @with_supported_dtypes({"2.13.0 and below": ("int32", "int64")}, backend_version)
 def repeat(
     x: Union[tf.Tensor, tf.Variable],
@@ -526,6 +529,9 @@ def constant_pad(
     if x.shape == ():
         x = tf.reshape(x, (-1,))
     return tf.pad(x, pad_width, constant_values=value)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 
