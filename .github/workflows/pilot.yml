@@ -11,6 +11,9 @@ jobs:
         steps:
           - uses: actions/checkout@v2
             with:
+              repository: ${{github.repository}}
+              token: ${{secrets.GITHUB_TOKEN}}
+              ref: ${{github.ref}}
               path: DocPilot
               persist-credentials: false
               submodules: "recursive"
@@ -37,8 +40,16 @@ jobs:
             run: |
               cd DocPilot
               python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
+
+          - name: Check if there are changes 📝
+            id: check
+            run: |
+                if [[ -n "$(git status --porcelain)" ]]; then
+                  echo "changes=true" >> $GITHUB_OUTPUT
+                fi
           
           - name: Update file with Docstring
+            if: steps.check.outputs.changes == 'true'
             run: |
               git config --local user.email "samuel_e_armstrong@yahoo.co.uk"
               git config --local user.name "Sam-Armstrong"
