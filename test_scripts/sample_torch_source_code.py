@@ -3044,6 +3044,45 @@ def diff(
     append: Optional[Union[torch.Tensor, int, float, list, tuple]] = None,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
+    """Computes the n-th discrete difference along the given axis.
+
+    The n-th differences are calculated by shifting the array by n elements along the
+    given axis and subtracting the shifted values from the original array.
+
+    Parameters
+    ----------
+    x : array_like
+        Input array
+    n : int, optional
+        The number of times values are differenced. If zero, the input is returned as-is.
+        Default is 1.
+    axis : int, optional
+        The axis along which the differences are taken, default is the last axis.
+    prepend, append : array_like, scalar, or None
+        Values to prepend or append to `x` along axis prior to performing the difference.
+        Scalar values are expanded to arrays with length 1 in the direction of axis and the shape of the input array in along all other axes. Otherwise, the dimensions of `prepend` and `append` along axis must match that of `x`.
+    out : ndarray, optional
+        Alternative output array in which to place the result. Must be of the same shape and buffer length as the expected output.
+
+    Returns
+    -------
+    diff : ndarray
+        The n-th differences. The shape of the output is the same as `x` except along `axis` where the dimension is smaller by `n`.
+
+    Examples
+    --------
+    >>> x = torch.tensor([1, 2, 4, 7, 0])
+    >>> torch.diff(x)
+    tensor([1, 2, 3, -7])
+
+    >>> x = torch.tensor([[1, 3, 6, 10], [0, 5, 6, 8]])
+    >>> torch.diff(x, axis=0)
+    tensor([[ -1,   2,  0,  -2]])
+
+    >>> x = torch.tensor([1, 4, np.nan, 2, 3])
+    >>> torch.diff(x, prepend=0)
+    tensor([3., nan, -2.,  1.])
+    """
     x = x if isinstance(x, torch.Tensor) else torch.tensor(x)
     prepend = (
         prepend
