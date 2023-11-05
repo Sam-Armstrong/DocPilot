@@ -50,11 +50,17 @@ def add_docstring(key):
     with open("diff.txt", '+rb') as f:
         # intelligent regex
         content = f.readlines()
-        fns_with_docstring = dict()
+        file_fns_without_docstring = {}
+        filename = " "
         contains_docstring = False
         in_func = False
         for i, line in enumerate(content):
             line = line.decode('utf-8')  # Decode the bytes to a string
+            if line.startswith('+++'):
+                start_index = line.find('/')
+                if start_index != -1:
+                    filename = line[start_index+1:].rstrip('\n')
+                    fns_without_docstring = {}
             if line.replace(' ', '').startswith("+def"):
                 in_func = True
                 func_name = line.replace(' ', '').split(
@@ -62,50 +68,54 @@ def add_docstring(key):
                 # regex to check if there exists a docstring
             if line.replace(' ', '') == '+\n' or line.replace(' ', '') == '\n' or i == len(content) - 1:
                 if in_func and not contains_docstring:
-                    fns_with_docstring[func_name] = generate_docstring(
+                    fns_without_docstring[func_name] = generate_docstring(
                         filename, func_name, key)
+                    if filename not in file_fns_without_docstring:
+                        file_fns_without_docstring[filename] = {}
+                    file_fns_without_docstring[filename] = fns_without_docstring
                 in_func = False
                 contains_docstring = False
                 func_name = ""
             if '"""' in line:
                 contains_docstring = True
-    return fns_with_docstring
+    return file_fns_without_docstring
 
 
-def merge_docstring(fns_without_docstring):
-    with open(filename, '+rb') as f:
-        content = f.readlines()
-        fn_wo_doc = False
-        current_docstring = ""
-        docstring_placement = {}
-        for i, line in enumerate(content):
-            line = line.decode('utf-8')
+def merge_docstring(file_fns_without_docstring):
+    for filename, fns_without_docstring in file_fns_without_docstring.items():
+        with open(filename, '+rb') as f:
+            content = f.readlines()
+            fn_wo_doc = False
+            current_docstring = ""
+            docstring_placement = {}
+            for i, line in enumerate(content):
+                line = line.decode('utf-8')
 
-            # if a fn without docstring is defined on this line
-            if any([fn_name in line for fn_name in fns_without_docstring.keys()]) and "def" in line:
-                fn_wo_doc = True
-                for fn_name in fns_without_docstring.keys():
-                    if fn_name in line:
-                        current_docstring = fns_without_docstring[fn_name]
-                        break
-            if ("):" in line or ") ->" in line) and fn_wo_doc:
-                docstring_placement[i + 2] = current_docstring
-                current_docstring = ""
-                fn_wo_doc = False
+                # if a fn without docstring is defined on this line
+                if any([fn_name in line for fn_name in fns_without_docstring.keys()]) and "def" in line:
+                    fn_wo_doc = True
+                    for fn_name in fns_without_docstring.keys():
+                        if fn_name in line:
+                            current_docstring = fns_without_docstring[fn_name]
+                            break
+                if ("):" in line or ") ->" in line) and fn_wo_doc:
+                    docstring_placement[i + 2] = current_docstring
+                    current_docstring = ""
+                    fn_wo_doc = False
 
-    # sort docstring placements
-    docstring_placement = dict(sorted(docstring_placement.items()))
+        # sort docstring placements
+        docstring_placement = dict(sorted(docstring_placement.items()))
 
-    with fileinput.input(files=(filename,), inplace=True) as file:
-        for line_num, line in enumerate(file, start=1):
-            # Check if this line should have content added
-            if line_num in docstring_placement:
-                content_to_add = docstring_placement[line_num]
-                print(content_to_add, end='')
-            print(line, end='')
+        with fileinput.input(files=(filename,), inplace=True) as file:
+            for line_num, line in enumerate(file, start=1):
+                # Check if this line should have content added
+                if line_num in docstring_placement:
+                    content_to_add = docstring_placement[line_num]
+                    print(content_to_add, end='')
+                print(line, end='')
 
 
 if __name__ == "__main__":
-    key = sys.argv[1]
-    docstring_dict = add_docstring(key)
+    # key = sys.argv[1]
+    docstring_dict = add_docstring("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")
     merge_docstring(docstring_dict)

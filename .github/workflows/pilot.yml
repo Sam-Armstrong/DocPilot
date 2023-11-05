@@ -16,31 +16,14 @@ jobs:
               submodules: "recursive"
               ref: ${{github.head_ref}}
               fetch-depth: 100
-
-          - name: Get files Changes
-            id: changed-files
-            uses: lots0logs/gh-action-get-changed-files@2.2.2
-            with:
-              token: ${{ secrets.GITHUB_TOKEN }}
         
           - name: Fetch Commit Changes
             id: fetch_changes
             run: |
               cd DocPilot
               # files changed can be accessed through ${HOME}/files.json
-              git diff HEAD~1 HEAD --output="temp.txt"
-              grep '^\+' temp.txt > diff.txt     
+              git diff HEAD~1 HEAD --output="diff.txt"  
 
-          - name: Check Json file
-            shell: python
-            run: |
-              import json
-              import os
-              
-              home_dir = os.path.expanduser("~")
-              with open(home_dir + '/files.json', 'r') as f:
-                data = json.load(f)
-              print(data)
               
           - name: Install Python Clients
             run: |
@@ -66,13 +49,20 @@ jobs:
             continue-on-error: true
             run: |
               pre-commit run -a
+          
+          - name: Set up Git
+            run: |
+              git config --global user.email "actions@github.com"
+              git config --global user.name "GitHub Actions"
+              git config --global credential.helper store
+              git config --global core.askPass ""
+
 
           - name: Update file with Docstring
             if: steps.check.outputs.changes == 'true'
             run: |
               cd DocPilot
-              git config --local user.email "samuel_e_armstrong@yahoo.co.uk"
-              git config --local user.name "Sam-Armstrong"
+              export GITHUB_TOKEN=$GITHUB_TOKEN
               git add .
               git commit -m "add docstring"
               git push

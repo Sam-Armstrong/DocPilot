@@ -1351,4 +1351,65 @@ def gather_nd(
 
 
 def hi_world():
+    """
+    Prints 'hi world' to the console.
+    
+    This simple function prints the string 'hi world' to the console/stdout when called.
+    It takes no arguments and returns nothing. Its purpose is for a simple test and example.
+    
+    Parameters
+    ----------
+    None
+    
+    Returns
+    -------
+    None
+    
+    Raises
+    ------
+    None
+    """
     pass
+
+def inplace_increment(
+    x: Union[ivy.Array, paddle.Tensor],
+    val: Union[ivy.Array, paddle.Tensor],
+) -> ivy.Array:
+    (x_native, val_native), _ = ivy.args_to_native(x, val)
+    if ivy.is_ivy_array(x):
+        target = x.data
+    else:
+        target = x
+    return paddle.assign(paddle_backend.add(x_native, val_native), target)
+
+def inplace_update(
+    x: Union[ivy.Array, paddle.Tensor],
+    val: Union[ivy.Array, paddle.Tensor],
+    /,
+    *,
+    ensure_in_backend: bool = False,
+    keep_input_dtype: bool = False,
+) -> ivy.Array:
+    _check_inplace_update_support(x, ensure_in_backend)
+    if ivy.is_array(x) and ivy.is_array(val):
+        (x_native, val_native), _ = ivy.args_to_native(x, val)
+
+        if val_native.shape == x_native.shape:
+            if x_native.dtype != val_native.dtype:
+                x_native = x_native.astype(val_native.dtype)
+            paddle.assign(val_native, x_native)
+        else:
+            x_native = val_native
+        if ivy.is_native_array(x):
+            return x_native
+        if ivy.is_ivy_array(x):
+            x.data = x_native
+        else:
+            x = ivy.Array(x_native)
+        return x
+    else:
+        return val
+    
+    
+
+
