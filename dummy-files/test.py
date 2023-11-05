@@ -333,6 +333,27 @@ def full_like(
     device: core.Place = None,
     out: Optional[paddle.Tensor] = None,
 ) -> paddle.Tensor:
+"""Full_like returns a new array with the same shape as x filled with fill_value.
+
+Parameters
+----------
+x : paddle.Tensor
+    Input tensor whose shape will be copied.
+    
+fill_value : Number
+    The value to fill the returned tensor with.
+
+dtype : paddle.dtype, optional
+    Datatype of returned tensor. Defaults to x.dtype.
+
+device : core.Place, optional 
+    Device on which to place the returned tensor. Defaults to x.device.
+
+Returns
+-------
+paddle.Tensor
+    Tensor with shape identical to x, filled with fill_value.
+
     return paddle_backend.full(
         shape=x.shape, fill_value=fill_value, dtype=dtype, device=device
     )
