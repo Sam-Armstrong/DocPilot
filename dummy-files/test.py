@@ -213,27 +213,6 @@ def empty(
     device: core.Place = None,
     out: Optional[paddle.Tensor] = None,
 ) -> paddle.Tensor:
-"""
-Creates an uninitialized array with a specified shape and dtype.
-
-Parameters
-----------
-shape : Union[ivy.NativeShape, Sequence[int]]
-    Shape of the empty array, e.g., (2, 3) or 2.
-dtype : paddle.dtype  
-    Desired output data-type for the array, e.g, 'float32'.
-device : core.Place, optional
-    Device on which the memory is allocated, by default None.        
-out : Optional[paddle.Tensor], optional
-    Alternative output array in which to place the result, by default None.
-        
-Returns
--------
-paddle.Tensor
-    An uninitialized array with the given shape and dtype.
-    
-"""
-```
     if isinstance(shape, int):
         shape = [shape]
     return paddle.empty(shape=shape).cast(dtype)
@@ -248,5 +227,68 @@ def empty_like(
     out: Optional[paddle.Tensor] = None,
 ) -> paddle.Tensor:
     return paddle.empty(shape=x.shape).cast(dtype)
+
+@with_unsupported_device_and_dtypes(
+    {
+        "2.5.1 and below": {
+            "cpu": (
+                "uint8",
+                "int8",
+                "int16",
+                "float16",
+                "complex64",
+                "complex128",
+                "bool",
+            )
+        }
+    },
+    backend_version,
+)
+def eye(
+    n_rows: int,
+    n_cols: Optional[int] = None,
+    /,
+    *,
+    k: int = 0,
+    batch_shape: Optional[Union[int, Sequence[int]]] = None,
+    dtype: paddle.dtype,
+    device: core.Place = None,
+    out: Optional[paddle.Tensor] = None,
+) -> paddle.Tensor:
+    if n_cols is None:
+        n_cols = n_rows
+    if batch_shape is None:
+        batch_shape = []
+    i = paddle.eye(n_rows, n_cols, dtype=dtype)
+    reshape_dims = [1] * len(batch_shape) + [n_rows, n_cols]
+    tile_dims = list(batch_shape) + [1, 1]
+
+    # handle index of the diagonal k
+    if k == 0:
+        return paddle.reshape(i, reshape_dims)
+
+    elif -n_rows < k < 0:
+        mat = paddle.concat(
+            [
+                paddle.zeros([-k, n_cols], dtype=dtype),
+                i[: n_rows + k],
+            ],
+            0,
+        )
+        return paddle.tile(paddle.reshape(mat, reshape_dims), tile_dims)
+
+    elif 0 < k < n_cols:
+        mat = paddle.concat(
+            [
+                paddle.zeros([n_rows, k], dtype=dtype),
+                i[:, : n_cols - k],
+            ],
+            1,
+        )
+        return paddle.tile(paddle.reshape(mat, reshape_dims), tile_dims)
+    else:
+        return paddle.zeros(batch_shape + [n_rows, n_cols], dtype=dtype)
+
+
 
 
