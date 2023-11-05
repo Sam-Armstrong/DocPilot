@@ -26,9 +26,7 @@ jobs:
 
       - name: Generate Documentation
         run: |
-          cd DocPilot
-          sphinx quickstart
-          cd docs
+          cd DocPilot/docs
           sphinx-apidoc -o source/ ../DocPilot/
           make html
 
