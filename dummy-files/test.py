@@ -133,36 +133,6 @@ def randint(
     seed: Optional[int] = None,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
-"""
-Generates pseudo-random integers from a uniform distribution. 
-
-The low and high parameters set the minimum and maximum integer 
-values to be drawn from the distribution. The function will 
-generate random integers between low and high, inclusive.
-
-Parameters
-----------
-low : int
-    Lower bound / minimum value of the distribution.
-high : int
-    Upper bound / maximum value of the distribution.
-shape : array_like, optional
-    Output shape. If not provided, a single value is returned.
-device : str, optional
-    device on which to create the array 'cuda:0', 'cuda:1', 'cpu' etc. 
-dtype: ivy.Dtype, optional
-    output data type. Default is ivy.int32.
-seed: int, optional
-    Random seed.
-out: array_like, optional
-    Optional output array, for writing the result to. Its type is preserved.
-
-Returns
--------
-ret
-    Random samples from the specified uniform distribution. 
-    
-"""
     if not dtype:
         dtype = ivy.default_int_dtype()
     dtype = ivy.as_native_dtype(dtype)
