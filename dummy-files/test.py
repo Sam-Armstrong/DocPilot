@@ -373,3 +373,17 @@ def tile(
     # TODO remove the unifying behaviour code if tensorflow handles this
     # https://github.com/tensorflow/tensorflow/issues/58002
     return tf.tile(x, repeats)
+
+def constant_pad(
+    x, /, pad_width, *, value=0, out: Optional[Union[tf.Tensor, tf.Variable]] = None
+):
+    if x.shape == ():
+        x = tf.reshape(x, (-1,))
+    return tf.pad(x, pad_width, constant_values=value)
+
+
+def zero_pad(x, /, pad_width, *, out: Optional[Union[tf.Tensor, tf.Variable]] = None):
+    if x.shape == ():
+        x = tf.reshape(x, (-1,))
+    return tf.pad(x, pad_width)
+
