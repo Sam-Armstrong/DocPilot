@@ -213,6 +213,27 @@ def empty(
     device: core.Place = None,
     out: Optional[paddle.Tensor] = None,
 ) -> paddle.Tensor:
+"""
+Creates an uninitialized array with a specified shape and dtype.
+
+Parameters
+----------
+shape : Union[ivy.NativeShape, Sequence[int]]
+    Shape of the empty array, e.g., (2, 3) or 2.
+dtype : paddle.dtype  
+    Desired output data-type for the array, e.g, 'float32'.
+device : core.Place, optional
+    Device on which the memory is allocated, by default None.        
+out : Optional[paddle.Tensor], optional
+    Alternative output array in which to place the result, by default None.
+        
+Returns
+-------
+paddle.Tensor
+    An uninitialized array with the given shape and dtype.
+    
+"""
+```
     if isinstance(shape, int):
         shape = [shape]
     return paddle.empty(shape=shape).cast(dtype)
