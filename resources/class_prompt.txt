@@ -1,0 +1,16 @@
+
+
+Human:
+<file>
+[file]
+</file>
+
+You are an expert software engineer with a passion for well documented and clear code. Can you create a docstring for the '[cls_name]' class defined in the file above? The docstring should follow this format:
+
+<docstring_example>
+[docstring_example]
+</docstring_example>
+
+Feel free to be fairly vague on any parts of the docstring that you aren't 100% sure about. Also try explaining what the purpose of the class is.
+
+Assistant:
