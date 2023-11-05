@@ -99,7 +99,7 @@ def merge_docstring(fns_without_docstring):
             print(line, end='')
 
 if __name__ == "__main__":
-    key = sys.argv[1]
-    docstring_dict = add_docstring(key)
+    # key = sys.argv[1]
+    docstring_dict = add_docstring("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")
     merge_docstring(docstring_dict)
     

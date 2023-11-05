@@ -496,6 +496,7 @@ def stack(
     except ValueError as e:
         raise ivy.utils.exceptions.IvyIndexError(e)
 
+<<<<<<< Updated upstream
 
 def permute_dims(
     x: Union[tf.Tensor, tf.Variable],
@@ -506,6 +507,25 @@ def permute_dims(
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
     return tf.transpose(x, perm=axes)
+=======
+>>>>>>> Stashed changes
 
+@with_supported_dtypes({"2.13.0 and below": ("int32", "int64")}, backend_version)
+def repeat(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    repeats: Union[int, List[int]],
+    *,
+    axis: int = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    return tf.repeat(x, repeats, axis)
+
+def constant_pad(
+    x, /, pad_width, *, value=0, out: Optional[Union[tf.Tensor, tf.Variable]] = None
+):
+    if x.shape == ():
+        x = tf.reshape(x, (-1,))
+    return tf.pad(x, pad_width, constant_values=value)
 
 
