@@ -324,38 +324,20 @@ def full(
     return ret
 
 
-def full_like(
-    x: paddle.Tensor,
-    /,
-    fill_value: Number,
-    *,
-    dtype: paddle.dtype,
-    device: core.Place = None,
-    out: Optional[paddle.Tensor] = None,
-) -> paddle.Tensor:
-"""Full_like returns a new array with the same shape as x filled with fill_value.
-
-Parameters
-----------
-x : paddle.Tensor
-    Input tensor whose shape will be copied.
-    
-fill_value : Number
-    The value to fill the returned tensor with.
-
-dtype : paddle.dtype, optional
-    Datatype of returned tensor. Defaults to x.dtype.
-
-device : core.Place, optional 
-    Device on which to place the returned tensor. Defaults to x.device.
-
-Returns
--------
-paddle.Tensor
-    Tensor with shape identical to x, filled with fill_value.
-
-    return paddle_backend.full(
-        shape=x.shape, fill_value=fill_value, dtype=dtype, device=device
+def _differentiable_linspace(start, stop, num, *, dtype=None):
+    start = ivy.to_native(start)
+    num = paddle.to_tensor(num, stop_gradient=False)
+    if num == 1:
+        return paddle_backend.expand_dims(start, axis=0)
+    n_m_1 = paddle_backend.subtract(num, 1)
+    increment = paddle_backend.divide(paddle_backend.subtract(stop, start), n_m_1)
+    increment_tiled = paddle_backend.repeat(increment, n_m_1)
+    increments = paddle_backend.multiply(
+        increment_tiled,
+        paddle.linspace(1, n_m_1, n_m_1.cast(paddle.int32), dtype=dtype),
     )
-
+    if isinstance(start, int) or start.ndim == 0:
+        start = paddle_backend.expand_dims(start, axis=0)
+    res = paddle_backend.concat((start, paddle_backend.add(start, increments)), axis=0)
+    return res.cast(dtype)
 

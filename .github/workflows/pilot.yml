@@ -40,13 +40,7 @@ jobs:
             run: |
               cd DocPilot
               python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
-              rm -rf diff.txt temp.txt
-
-          - name:  Run pre-commit 🚀
-            continue-on-error: true
-            run: |
-              cd DocPilot
-              pre-commit run -a ${{ join(fromJSON(steps.changed-files.outputs.all), ' ')}}
+              rm -rf diff.txt temp.txt     
 
           - name: Check if there are changes 📝
             id: check
@@ -62,6 +56,7 @@ jobs:
               cd DocPilot
               git config --local user.email "samuel_e_armstrong@yahoo.co.uk"
               git config --local user.name "Sam-Armstrong"
+              pre-commit install
               git add .
               git commit -m "add docstring"
               git push
