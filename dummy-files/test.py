@@ -377,6 +377,34 @@ def tile(
 def constant_pad(
     x, /, pad_width, *, value=0, out: Optional[Union[tf.Tensor, tf.Variable]] = None
 ):
+"""Adds padding to a tensor.
+
+Pads a tensor with a constant value along each axis specified by pad_width.
+The pad_width tells how many values to add before and after the contents of the 
+tensor along each axis. The pad_width specifies the padding widths for each axis 
+as ((before_1, after_1), ... (before_N, after_N)), where N is the number of axes.
+
+Parameters
+----------
+x : tf.Tensor
+    Tensor to pad.
+pad_width : {int, tuple}
+    Number of values padded to the edges of each axis. ((before_1, after_1), ... (before_N, after_N)) unique pad widths for each axis. 
+value : scalar, optional
+    The constant value to pad the tensor with. Default is 0.
+
+Returns
+-------
+ret : tf.Tensor
+    Padded tensor of rank equal to x with shape increased according 
+    to pad_width.
+
+Examples
+--------
+>>> t = tf.constant([[1,2,3], [4,5,6]])
+>>> constant_pad(t, pad_width=((1, 1), (2, 2)), value=0)
+<tf.Tensor: shape=(4, 7), dtype=int32, numpy=
+array([[0, 0, 0, 0
     if x.shape == ():
         x = tf.reshape(x, (-1,))
     return tf.pad(x, pad_width, constant_values=value)
