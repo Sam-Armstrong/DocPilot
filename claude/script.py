@@ -41,7 +41,7 @@ def generate_docstring(file_str, fn_name, key):
     )
     docstring = _extract_relevant_info(completion.completion)
     docstring = docstring.replace("\n", "\n    ")
-    return docstring + "\n"
+    return "    " + docstring + "\n"
 
 
 def add_docstring(key):
