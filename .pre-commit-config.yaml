@@ -6,13 +6,10 @@ repos:
       - id: check-toml
       - id: end-of-file-fixer
         exclude: ^.*yml$
-  - repo: https://github.com/pre-commit/mirrors-autopep8
-    rev: v1.5
-    hooks:
-    - id: autopep8
         
-  - repo: https://github.com/PyCQA/autoflake
-    rev: v2.2.1
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 23.9.1
     hooks:
-      - id: autoflake
+      - id: black
         exclude: ^.*yml$
+        language_version: python3
