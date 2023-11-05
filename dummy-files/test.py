@@ -173,6 +173,28 @@ def argmin(
     select_last_index: bool = False,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
+"""
+Calculates the indices of the minimum values along an axis of the input array.
+
+Parameters
+----------
+x: tf.Tensor or tf.Variable
+   Input array.
+axis: Optional[int], optional
+   Axis along which to find the minimum indices. Default is None, in which case the minimum element index is calculated over the flattened array. 
+keepdims: bool, default False
+   If this is set to True, the axes which are reduced are left in the result as dimensions with size one.
+dtype: Optional[tf.DType], optional
+   Data type of returned indices. If not provided, the data type of x is used.
+select_last_index: bool, default False
+  If True, argmax returns the index of the last occurrence of the minimum in the axis. Otherwise, the index of the first occurrence is returned.
+
+Returns
+-------
+ret
+   The indices of the minimum values along the specified axis.
+
+"""
     n_dims = tf.rank(x).numpy()
     if axis is None:
         x = tf.reshape(x, [-1])
