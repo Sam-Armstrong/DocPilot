@@ -50,14 +50,18 @@ jobs:
                 if [[ -n "$(git status --porcelain)" ]]; then
                   echo "changes=true" >> $GITHUB_OUTPUT
                 fi
-          
+
+          - name: Run Linter Bot 
+            continue-on-error: true
+            run: |
+              pre-commit run -a
+
           - name: Update file with Docstring
             if: steps.check.outputs.changes == 'true'
             run: |
               cd DocPilot
               git config --local user.email "samuel_e_armstrong@yahoo.co.uk"
               git config --local user.name "Sam-Armstrong"
-              pre-commit run -a
               git add .
               git commit -m "add docstring"
               git push
