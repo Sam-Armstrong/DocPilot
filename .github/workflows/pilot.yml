@@ -46,7 +46,7 @@ jobs:
             continue-on-error: true
             run: |
               cd DocPilot
-              pre-commit run -a $changed_files
+              pre-commit run -a ${{ join(fromJSON(steps.changed-files.outputs.all), ' ')}}
 
           - name: Check if there are changes 📝
             id: check

@@ -324,4 +324,17 @@ def full(
     return ret
 
 
+def full_like(
+    x: paddle.Tensor,
+    /,
+    fill_value: Number,
+    *,
+    dtype: paddle.dtype,
+    device: core.Place = None,
+    out: Optional[paddle.Tensor] = None,
+) -> paddle.Tensor:
+    return paddle_backend.full(
+        shape=x.shape, fill_value=fill_value, dtype=dtype, device=device
+    )
+
 
