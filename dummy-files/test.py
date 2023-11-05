@@ -341,3 +341,61 @@ def _differentiable_linspace(start, stop, num, *, dtype=None):
     res = paddle_backend.concat((start, paddle_backend.add(start, increments)), axis=0)
     return res.cast(dtype)
 
+@with_unsupported_device_and_dtypes(
+    {"2.5.1 and below": {"cpu": ("uint16", "bfloat16", "float16")}}, backend_version
+)
+def linspace(
+    start: Union[paddle.Tensor, float],
+    stop: Union[paddle.Tensor, float],
+    /,
+    num: int,
+    *,
+    axis: Optional[int] = None,
+    endpoint: bool = True,
+    dtype: paddle.dtype,
+    device: core.Place = None,
+    out: Optional[paddle.Tensor] = None,
+) -> paddle.Tensor:
+    if not isinstance(start, (paddle.Tensor, int)):
+        start = paddle.to_tensor(start)
+
+    if not isinstance(start, (paddle.Tensor, int)):
+        start = paddle.to_tensor(stop)
+
+    if axis is None:
+        axis = -1
+    if not endpoint:
+        if dtype is not None:
+            ans = _linspace_helper(start, stop, num + 1, axis, dtype=dtype)
+        else:
+            ans = _linspace_helper(start, stop, num + 1, axis)
+        if axis < 0:
+            axis += len(ans.shape)
+        ans = paddle_backend.get_item(ans, _slice_at_axis(slice(None, -1), axis))
+    else:
+        if dtype is not None:
+            ans = _linspace_helper(start, stop, num, axis, dtype=dtype)
+        else:
+            ans = _linspace_helper(start, stop, num, axis)
+    if (
+        endpoint
+        and ans.shape[0] > 1
+        and (not isinstance(start, paddle.Tensor))
+        and (not isinstance(stop, paddle.Tensor))
+    ):
+        ans[-1] = stop
+    if (
+        ans.shape[0] >= 1
+        and (not isinstance(start, paddle.Tensor))
+        and (not isinstance(stop, paddle.Tensor))
+        and ans[0] != start
+    ):
+        ans[0] = start
+    if ivy.is_ivy_array(ans):
+        ans = paddle.to_tensor(ans.data)
+    if "int" in str(dtype) and paddle.is_floating_point(ans):
+        ans = paddle.floor(ans)
+    return ans.cast(dtype)
+
+
+
