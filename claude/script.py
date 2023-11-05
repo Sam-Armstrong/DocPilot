@@ -82,7 +82,7 @@ def merge_docstring(fns_without_docstring):
                     if fn_name in line:
                         current_docstring = fns_without_docstring[fn_name]
                         break
-            if "):" in line and fn_wo_doc:
+            if ("):" in line or ") ->" in line) and fn_wo_doc:
                 docstring_placement[i + 2] = current_docstring
                 current_docstring = ""
                 fn_wo_doc = False
