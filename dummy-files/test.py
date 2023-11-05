@@ -1230,5 +1230,9 @@ def get_item(
     *,
     copy: bool = None,
 ) -> paddle.Tensor:
+<<<<<<< Updated upstream
+    return x.__getitem__(query)
+>>>>>>> Stashed changes
+=======
     return x.__getitem__(query)
 >>>>>>> Stashed changes
