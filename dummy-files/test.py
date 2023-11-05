@@ -46,6 +46,7 @@ def multi_head_attention(
     training: Optional[bool] = False,
     out: torch.Tensor = None,
 ) -> torch.Tensor:
+    
     if key is None and value is None:
         key = value = query
     emb_dim = _get_embed_dim(
@@ -127,6 +128,7 @@ def linear(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
+    
     return torch.nn.functional.linear(x, weight, bias)
 
 
@@ -134,6 +136,34 @@ linear.partial_mixed_handler = lambda x, weight, **kwargs: weight.ndim == 2
 
 
 def _ff_xd_before_conv(x, filters, dims, filter_format, x_dilations):
+    """Adds dilations to the input before performing convolution.
+    
+    This function adds dilations to the input tensor ``x`` before performing 
+    convolution with ``filters``. 
+    
+    Parameters
+    ----------
+    x : torch.Tensor
+        The input tensor.
+    filters : torch.Tensor 
+        The convolution filters.
+    dims : int
+        The number of dimensions for convolution.
+    filter_format : str
+        The format of the filters, either 'channel_first' or 'channel_last'.
+    x_dilations : int or tuple of ints
+        The dilation rates to apply to the input tensor. Can be a single int 
+        if same dilation along all axes, or a tuple specifying dilation for each axis.
+    
+    Returns
+    -------
+    tuple
+        x : torch.Tensor
+            The input tensor after dilations have been applied.
+        filters : torch.Tensor
+            The (optionally permuted) convolution filters.
+            
+    """
     if filter_format == "channel_last":
         filters = filters.permute(-1, -2, *range(dims))
 
@@ -157,6 +187,41 @@ def _ff_xd_before_conv(x, filters, dims, filter_format, x_dilations):
 def _pad_before_conv(
     x, filters, strides, padding, dims, dilations, filter_format="channel_last"
 ):
+    """
+    Pads the input x before passing it into a convolution operation.
+    
+    This handles padding in the case where strides > 1 or dilations > 1, 
+    which require padding the input in a non-symmetric way to match PyTorch's
+    behavior.
+    
+    Parameters
+    ----------
+    x : torch.Tensor
+        The input tensor to be padded.
+    filters : torch.Tensor 
+        The filters/kernel for the convolution.
+    strides : int or tuple of ints
+        The stride for the convolution.
+    padding : str, int or tuple of tuple of ints 
+        The padding mode or amount of padding to apply.
+    dims : int
+        The number of spatial dimensions for the convolution.
+    dilations: int or tuple of ints
+        The dilation amounts.
+    filter_format : str
+        Either 'channel_first' or 'channel_last' indicating the ordering of 
+        channels in filters.
+    
+    Returns
+    -------
+    x_padded : torch.Tensor
+        The input x with the appropriate padding applied.
+    padding_str : str 
+        The padding argument to pass to the PyTorch convolution function.
+        This will be 'valid' if custom padding was applied to x, or the original
+        padding mode otherwise.
+    
+    """
     dilations = [dilations] * dims if isinstance(dilations, int) else dilations
     strides = [strides] * dims if isinstance(strides, int) else strides
     filter_shape = (
@@ -192,6 +257,41 @@ def _pad_before_conv(
 def _pad_before_conv_tranpose(
     x, filters, strides, padding, dims, dilations, output_shape, filter_shape
 ):
+    """
+    Pads the input x before passing it into a convolution operation.
+    
+    This handles padding in the case where strides > 1 or dilations > 1, 
+    which require padding the input in a non-symmetric way to match PyTorch's
+    behavior.
+    
+    Parameters
+    ----------
+    x : torch.Tensor
+        The input tensor to be padded.
+    filters : torch.Tensor 
+        The filters/kernel for the convolution.
+    strides : int or tuple of ints
+        The stride for the convolution.
+    padding : str, int or tuple of tuple of ints 
+        The padding mode or amount of padding to apply.
+    dims : int
+        The number of spatial dimensions for the convolution.
+    dilations: int or tuple of ints
+        The dilation amounts.
+    filter_format : str
+        Either 'channel_first' or 'channel_last' indicating the ordering of 
+        channels in filters.
+    
+    Returns
+    -------
+    x_padded : torch.Tensor
+        The input x with the appropriate padding applied.
+    padding_str : str 
+        The padding argument to pass to the PyTorch convolution function.
+        This will be 'valid' if custom padding was applied to x, or the original
+        padding mode otherwise.
+    
+    """
     if output_shape is None:
         out_shape = [
             _deconv_length(
@@ -364,6 +464,39 @@ def conv2d_transpose(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ):
+    """Transpose convolution (deconvolution) layer.
+    
+    Performs a 2D transpose convolution (deconvolution) on an input tensor, 
+    using the provided filters, strides, padding and output padding. 
+    
+    Parameters
+    ----------
+    x : torch.Tensor
+        Input tensor to perform transpose convolution on.
+    filters : torch.Tensor 
+        Convolution filters.  
+    strides : Union[int, Tuple[int, int]]
+        Stride sizes for the transpose convolution.
+    padding : str
+        Type of padding, either 'VALID' or 'SAME'.  
+    output_shape : Optional[Union[ivy.NativeShape, Sequence[int]]]
+        Shape of the output produced by the transpose convolution. If not provided,
+        calculated automatically based on the input size, filter size and strides.  
+    data_format : str
+        Either 'NHWC' or 'NCHW' indicating the data format.
+    dilations : Union[int, Tuple[int, int]]
+        Dilation factors for the filters.  
+    bias : Optional[torch.Tensor] 
+        Optional bias tensor to add to the output. 
+    out : Optional[torch.Tensor]
+        Optional output tensor to write the result to.
+    
+    Returns
+    -------
+    torch.Tensor
+        Tensor result of the 2D transpose convolution.
+    
+    """
     if data_format == "NHWC":
         x = x.permute(0, 3, 1, 2)
     strides = [strides] * 2 if isinstance(strides, int) else strides
@@ -530,6 +663,7 @@ def conv_general_dilated(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ):
+    
     # permuting dims based on formats
     if data_format == "channel_last":
         x = x.permute(0, dims + 1, *range(1, dims + 1))
@@ -592,6 +726,7 @@ def conv_general_transpose(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ):
+    
     if data_format == "channel_last":
         x = x.permute(0, dims + 1, *range(1, dims + 1))
     strides = [strides] * dims if isinstance(strides, int) else strides
@@ -660,6 +795,38 @@ def scaled_dot_product_attention_v_2p0p0_and_above(
     mask=None,
     out=None,
 ):
+    """
+    Performs scaled dot-product attention.
+    
+    Scaled dot-product attention is an attention mechanism that takes 
+    in a query, key and value, and returns an attention weight representing
+    the relevance of each value to the query. This implementation includes
+    optional masking and scaling.
+    
+    This version is for PyTorch 2.0.0 and above.
+    
+    Parameters
+    ----------
+    q : torch.Tensor
+        Query tensor of shape (..., query_seq_len, dk).
+    k : torch.Tensor
+        Key tensor of shape (..., key_seq_len, dk).  
+    v : torch.Tensor
+        Value tensor of shape (..., key_seq_len, dv).
+    scale : float
+        Scaling factor for the dot products.   
+    mask : torch.Tensor, optional
+        Mask tensor applied to the dot product scores before softmax, shape
+        (..., query_seq_len, key_seq_len).
+    out : torch.Tensor, optional
+        Output tensor.
+            
+    Returns
+    -------
+    torch.Tensor
+        Attention weight tensor of shape (..., query_seq_len, key_seq_len).
+    
+    """
     if isinstance(mask, torch.Tensor):
         mask = torch.where(mask == 0, -torch.inf, 0)
     return torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=mask)
