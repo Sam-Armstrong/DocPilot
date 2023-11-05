@@ -1457,10 +1457,34 @@ def result_type(
         result = tf.experimental.numpy.result_type(result, arrays_and_dtypes[i])
     return as_ivy_dtype(result)
 
+
 def as_ivy_dtype(
     dtype_in: Union[tf.DType, str, int, float, complex, bool, np.dtype],
     /,
 ) -> ivy.Dtype:
+    """Converts a dtype into an ivy.Dtype object.
+
+    Parameters
+    ----------
+    dtype_in : Union[tf.DType, str, int, float, complex, bool, np.dtype]
+        The dtype to convert. Can be a TensorFlow dtype object, a string
+        representation of a dtype, a Python type like int or float, or a
+        NumPy dtype object.
+
+    Returns
+    -------
+    ivy.Dtype
+        The corresponding ivy.Dtype object.
+
+    Raises
+    ------
+    IvyException
+        If the input dtype is invalid and cannot be converted to an ivy.Dtype.
+
+    This function takes a dtype as input, such as a TensorFlow dtype, string,
+    Python type, or NumPy dtype, and converts it into the equivalent ivy.Dtype
+    object. This allows easy conversion between different dtype representations.
+    """
     if dtype_in is int:
         return ivy.default_int_dtype()
     if dtype_in is float:
