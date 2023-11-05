@@ -11,10 +11,10 @@ jobs:
         steps:
           - uses: actions/checkout@v2
             with:
-              repository: ${{github.repository}}
               token: ${{secrets.GITHUB_TOKEN}}
-              ref: ${{github.head_ref}}
+              path: DocPilot
               submodules: "recursive"
+              ref: ${{github.head_ref}}
               fetch-depth: 100
 
           - name: Get files Changes
