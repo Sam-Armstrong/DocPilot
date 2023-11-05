@@ -18,6 +18,7 @@ jobs:
               fetch-depth: 100
 
           - name: Get files Changes
+            id: changed-files
             uses: lots0logs/gh-action-get-changed-files@2.2.2
             with:
               token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,9 +40,12 @@ jobs:
               cd DocPilot
               python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
               rm -rf diff.txt temp.txt
+
           - name:  Run pre-commit 🚀
             continue-on-error: true
             uses: pre-commit/action@v3.0.0
+            with:
+              extra_args: flake-8 ${{join(fromJSON(steps.changed-files.outputs.all), ' ')}}
 
           - name: Check if there are changes 📝
             id: check
