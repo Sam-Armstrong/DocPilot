@@ -291,4 +291,37 @@ def eye(
 
 
 
+def to_dlpack(x, /, *, out: Optional[paddle.Tensor] = None):
+    return paddle.utils.dlpack.to_dlpack(x)
+
+
+def from_dlpack(x, /, *, out: Optional[paddle.Tensor] = None):
+    return paddle.utils.dlpack.from_dlpack(x)
+
+
+def full(
+    shape: Union[ivy.NativeShape, Sequence[int]],
+    fill_value: Union[int, float, bool],
+    *,
+    dtype: Optional[Union[ivy.Dtype, paddle.dtype]] = None,
+    device: core.Place = None,
+    out: Optional[paddle.Tensor] = None,
+) -> paddle.Tensor:
+    if dtype is None:
+        dtype = ivy.default_dtype(item=fill_value)
+    if not isinstance(shape, Sequence):
+        shape = [shape]
+    if isinstance(fill_value, complex):
+        fill_value = paddle.to_tensor(fill_value)
+        ret_real = paddle.full(shape=shape, fill_value=fill_value.real())
+        ret_imag = paddle.full(shape=shape, fill_value=fill_value.imag())
+        ret = paddle.complex(ret_real, ret_imag)
+    else:
+        dtype_ = None if ivy.as_native_dtype(dtype) == paddle.int8 else dtype
+        ret = paddle.full(shape=shape, fill_value=fill_value, dtype=dtype_)
+    if ret.dtype != ivy.as_native_dtype(dtype):
+        return ret.cast(dtype)
+    return ret
+
+
 
