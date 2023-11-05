@@ -19,3 +19,19 @@ def _reshape_fortran_tf(x, shape):
     if len(x.shape) > 0:
         x = tf.transpose(x)
     return tf.transpose(tf.reshape(x, shape[::-1]))
+
+
+def expand_dims(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    *,
+    copy: Optional[bool] = None,
+    axis: Union[int, Sequence[int]] = 0,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    try:
+        out_shape = _calculate_out_shape(axis, x.shape)
+        ret = tf.reshape(x, shape=out_shape)
+        return ret
+    except (tf.errors.InvalidArgumentError, np.AxisError) as error:
+        raise ivy.utils.exceptions.IvyIndexError(error)
