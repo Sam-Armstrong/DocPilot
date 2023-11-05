@@ -99,7 +99,8 @@ def multinomial(
     if not replace:
         orig_probs_shape = list(probs.shape)
         probs_flat = tf.reshape(probs, (-1, orig_probs_shape[-1]))
-        probs_flat = probs_flat / tf.math.reduce_sum(probs_flat, axis=-1, keepdims=True)
+        probs_flat = probs_flat / \
+            tf.math.reduce_sum(probs_flat, axis=-1, keepdims=True)
         probs_stack = tf.split(probs_flat, probs_flat.shape[0])
         samples_stack = []
         for prob in probs_stack:
@@ -206,6 +207,7 @@ def where(
     x1, x2 = ivy.promote_types_of_inputs(x1, x2)
     return tf.cast(tf.experimental.numpy.where(condition, x1, x2), x1.dtype)
 
+
 def empty(
     shape: Union[ivy.NativeShape, Sequence[int]],
     *,
@@ -227,6 +229,7 @@ def empty_like(
     out: Optional[paddle.Tensor] = None,
 ) -> paddle.Tensor:
     return paddle.empty(shape=x.shape).cast(dtype)
+
 
 @with_unsupported_device_and_dtypes(
     {
@@ -365,7 +368,8 @@ def _differentiable_linspace(start, stop, num, *, dtype=None):
     if num == 1:
         return paddle_backend.expand_dims(start, axis=0)
     n_m_1 = paddle_backend.subtract(num, 1)
-    increment = paddle_backend.divide(paddle_backend.subtract(stop, start), n_m_1)
+    increment = paddle_backend.divide(
+        paddle_backend.subtract(stop, start), n_m_1)
     increment_tiled = paddle_backend.repeat(increment, n_m_1)
     increments = paddle_backend.multiply(
         increment_tiled,
@@ -373,11 +377,14 @@ def _differentiable_linspace(start, stop, num, *, dtype=None):
     )
     if isinstance(start, int) or start.ndim == 0:
         start = paddle_backend.expand_dims(start, axis=0)
-    res = paddle_backend.concat((start, paddle_backend.add(start, increments)), axis=0)
+    res = paddle_backend.concat(
+        (start, paddle_backend.add(start, increments)), axis=0)
     return res.cast(dtype)
 
+
 @with_unsupported_device_and_dtypes(
-    {"2.5.1 and below": {"cpu": ("uint16", "bfloat16", "float16")}}, backend_version
+    {"2.5.1 and below": {
+        "cpu": ("uint16", "bfloat16", "float16")}}, backend_version
 )
 def linspace(
     start: Union[paddle.Tensor, float],
@@ -406,7 +413,8 @@ def linspace(
             ans = _linspace_helper(start, stop, num + 1, axis)
         if axis < 0:
             axis += len(ans.shape)
-        ans = paddle_backend.get_item(ans, _slice_at_axis(slice(None, -1), axis))
+        ans = paddle_backend.get_item(
+            ans, _slice_at_axis(slice(None, -1), axis))
     else:
         if dtype is not None:
             ans = _linspace_helper(start, stop, num, axis, dtype=dtype)
@@ -483,6 +491,7 @@ def reshape(
         return _reshape_fortran_tf(x, shape)
     return tf.reshape(x, shape)
 
+
 @with_unsupported_dtypes({"2.13.0 and below": ("bfloat16",)}, backend_version)
 def stack(
     arrays: Union[Tuple[tf.Tensor], List[tf.Tensor]],
@@ -496,20 +505,10 @@ def stack(
     except ValueError as e:
         raise ivy.utils.exceptions.IvyIndexError(e)
 
+
 <<<<<<< Updated upstream
-
-def permute_dims(
-    x: Union[tf.Tensor, tf.Variable],
-    /,
-    axes: Tuple[int, ...],
-    *,
-    copy: Optional[bool] = None,
-    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
-) -> Union[tf.Tensor, tf.Variable]:
-    return tf.transpose(x, perm=axes)
+<< << << < Updated upstream
 =======
->>>>>>> Stashed changes
-
 @with_supported_dtypes({"2.13.0 and below": ("int32", "int64")}, backend_version)
 def repeat(
     x: Union[tf.Tensor, tf.Variable],
@@ -527,5 +526,39 @@ def constant_pad(
     if x.shape == ():
         x = tf.reshape(x, (-1,))
     return tf.pad(x, pad_width, constant_values=value)
+>>>>>>> Stashed changes
 
 
+def permute_dims(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    axes: Tuple[int, ...],
+    *,
+    copy: Optional[bool] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    return tf.transpose(x, perm=axes)
+
+
+== == == =
+>>>>>> > Stashed changes
+
+
+@with_supported_dtypes({"2.13.0 and below": ("int32", "int64")}, backend_version)
+def repeat(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    repeats: Union[int, List[int]],
+    *,
+    axis: int = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    return tf.repeat(x, repeats, axis)
+
+
+def constant_pad(
+    x, /, pad_width, *, value=0, out: Optional[Union[tf.Tensor, tf.Variable]] = None
+):
+    if x.shape == ():
+        x = tf.reshape(x, (-1,))
+    return tf.pad(x, pad_width, constant_values=value)

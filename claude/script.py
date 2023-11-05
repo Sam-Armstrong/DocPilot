@@ -1,9 +1,10 @@
 from anthropic import Anthropic
-import sys
 import fileinput
+import sys
 
 
 filename = "dummy-files/test.py"
+
 
 def _extract_relevant_info(text):
     start_index = text.find('"""')
@@ -13,6 +14,7 @@ def _extract_relevant_info(text):
         return extracted_text
     else:
         return None
+
 
 def generate_docstring(file_str, fn_name, key):
     with open(file_str, 'r') as f:
@@ -41,6 +43,7 @@ def generate_docstring(file_str, fn_name, key):
     docstring = docstring.replace("\n", "\n    ")
     return docstring + "\n"
 
+
 def add_docstring(key):
     # diff text file all strings, parse the file to only fetch statements with additions
     # changed file names
@@ -54,11 +57,13 @@ def add_docstring(key):
             line = line.decode('utf-8')  # Decode the bytes to a string
             if line.replace(' ', '').startswith("+def"):
                 in_func = True
-                func_name = line.replace(' ', '').split('+def')[1].split('(')[0]
+                func_name = line.replace(' ', '').split(
+                    '+def')[1].split('(')[0]
                 # regex to check if there exists a docstring
             if line.replace(' ', '') == '+\n' or line.replace(' ', '') == '\n' or i == len(content) - 1:
                 if in_func and not contains_docstring:
-                    fns_with_docstring[func_name] = generate_docstring(filename, func_name, key)
+                    fns_with_docstring[func_name] = generate_docstring(
+                        filename, func_name, key)
                 in_func = False
                 contains_docstring = False
                 func_name = ""
@@ -87,8 +92,9 @@ def merge_docstring(fns_without_docstring):
                 docstring_placement[i + 2] = current_docstring
                 current_docstring = ""
                 fn_wo_doc = False
-    
-    docstring_placement = dict(sorted(docstring_placement.items()))  # sort docstring placements
+
+    # sort docstring placements
+    docstring_placement = dict(sorted(docstring_placement.items()))
 
     with fileinput.input(files=(filename,), inplace=True) as file:
         for line_num, line in enumerate(file, start=1):
@@ -98,8 +104,8 @@ def merge_docstring(fns_without_docstring):
                 print(content_to_add, end='')
             print(line, end='')
 
+
 if __name__ == "__main__":
-    # key = sys.argv[1]
-    docstring_dict = add_docstring("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")
+    key = sys.argv[1]
+    docstring_dict = add_docstring(key)
     merge_docstring(docstring_dict)
-    
