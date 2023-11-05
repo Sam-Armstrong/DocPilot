@@ -203,6 +203,23 @@ def where(
     *,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
+"""
+Select elements from `x1` or `x2` based on `condition`.
+
+Parameters
+----------
+condition : tf.Tensor or tf.Variable
+    Boolean tensor that determines whether to pick elements from `x1` or `x2`.
+x1 : tf.Tensor or tf.Variable 
+    Tensor containing values selected when `condition` is True.  
+x2 : tf.Tensor or tf.Variable
+    Tensor containing values selected when `condition` is False.
+
+Returns
+-------
+ret : tf.Tensor or tf.Variable
+    Tensor containing elements selected from `x1` or `x2` based on `condition`.
+"""
     x1, x2 = ivy.promote_types_of_inputs(x1, x2)
     return tf.cast(tf.experimental.numpy.where(condition, x1, x2), x1.dtype)
 
