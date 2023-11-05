@@ -1534,6 +1534,36 @@ def concat(
 
     Parameters
     ----------
+    xs : Union[Tuple[paddle.Tensor, ...], List[paddle.Tensor]]
+        The input tensors to concatenate.
+    axis : Optional[int], optional
+        The axis along which to concatenate. Default is 0.
+    out : Optional[paddle.Tensor], optional
+        Optional output tensor to write the result to. Default is None.
+
+    Returns
+    -------
+    paddle.Tensor
+        The concatenated tensor result.
+
+    Examples
+    --------
+    >>> x = paddle.to_tensor([1, 2, 3])
+    >>> y = paddle.to_tensor([4, 5, 6])
+    >>> concat([x, y])
+    tensor([1, 2, 3, 4, 5, 6])
+
+    >>> x = paddle.to_tensor([[1, 2], [3, 4]])
+    >>> y = paddle.to_tensor([[5, 6]])
+    >>> concat([x, y], axis=0)
+    tensor([[1, 2],
+            [3, 4],
+            [5, 6]])
+    """
+    """Concatenates multiple tensors along a given axis.
+
+    Parameters
+    ----------
     xs : Tuple[tf.Tensor, ...] or List[tf.Tensor]
         The input tensors to concatenate.
 
@@ -1690,6 +1720,36 @@ def concat(
     axis: Optional[int] = 0,
     out: Optional[paddle.Tensor] = None,
 ) -> paddle.Tensor:
+    """Concatenates multiple tensors along a given axis.
+
+    Parameters
+    ----------
+    xs : Union[Tuple[paddle.Tensor, ...], List[paddle.Tensor]]
+        The input tensors to concatenate.
+    axis : Optional[int], optional
+        The axis along which to concatenate. Default is 0.
+    out : Optional[paddle.Tensor], optional
+        Optional output tensor to write the result to. Default is None.
+
+    Returns
+    -------
+    paddle.Tensor
+        The concatenated tensor result.
+
+    Examples
+    --------
+    >>> x = paddle.to_tensor([1, 2, 3])
+    >>> y = paddle.to_tensor([4, 5, 6])
+    >>> concat([x, y])
+    tensor([1, 2, 3, 4, 5, 6])
+
+    >>> x = paddle.to_tensor([[1, 2], [3, 4]])
+    >>> y = paddle.to_tensor([[5, 6]])
+    >>> concat([x, y], axis=0)
+    tensor([[1, 2],
+            [3, 4],
+            [5, 6]])
+    """
     dtypes_list = list(set(map(lambda x: x.dtype, xs)))
     dtype = dtypes_list.pop()
     if len(dtypes_list) > 0:
