@@ -18,8 +18,3 @@ repos:
     hooks:
       - id: autoflake
         exclude: ^.*yml$
-  - repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
-    hooks:
-      - id: flake8
-        exclude: ^.*__init__.py$

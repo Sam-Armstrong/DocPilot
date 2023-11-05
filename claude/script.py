@@ -52,7 +52,6 @@ def add_docstring(key):
         contains_docstring = False
         in_func = False
         for i, line in enumerate(content):
-            print(i, len(content))
             line = line.decode('utf-8')  # Decode the bytes to a string
             if line.startswith("+def "):
                 in_func = True

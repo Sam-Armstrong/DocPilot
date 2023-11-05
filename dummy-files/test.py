@@ -395,3 +395,42 @@ def linspace(
 
 def to_dlpack(x, /, *, out: Optional[paddle.Tensor] = None):
     return paddle.utils.dlpack.to_dlpack(x)
+
+
+def flip(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    *,
+    copy: Optional[bool] = None,
+    axis: Optional[Union[int, Sequence[int]]] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    num_dims = len(x.shape)
+    if not num_dims:
+        ret = x
+    else:
+        if axis is None:
+            new_axis = list(range(num_dims))
+        else:
+            new_axis = axis
+        if type(new_axis) is int:
+            new_axis = [new_axis]
+        else:
+            new_axis = new_axis
+        new_axis = [item + num_dims if item < 0 else item for item in new_axis]
+        ret = tf.reverse(x, new_axis)
+    return ret
+
+
+def permute_dims(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    axes: Tuple[int, ...],
+    *,
+    copy: Optional[bool] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    return tf.transpose(x, perm=axes)
+
+
+
