@@ -35,7 +35,7 @@ jobs:
             shell: python
             run: |
               import json
-              with open(~/files.json, r) as f:
+              with open(./files.json, r) as f:
                 data = json.load(f)
               print(data)
               
