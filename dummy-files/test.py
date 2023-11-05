@@ -323,3 +323,18 @@ def roll(
             shift = [shift for _ in range(len(axis))]
         ret = tf.roll(x, shift, axis)
     return ret
+
+@with_unsupported_dtypes({"2.13.0 and below": ("bfloat16",)}, backend_version)
+def stack(
+    arrays: Union[Tuple[tf.Tensor], List[tf.Tensor]],
+    /,
+    *,
+    axis: int = 0,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    try:
+        return tf.experimental.numpy.stack(arrays, axis)
+    except ValueError as e:
+        raise ivy.utils.exceptions.IvyIndexError(e)
+    
+    
