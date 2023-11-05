@@ -64,7 +64,7 @@ jobs:
               cd DocPilot
               export GITHUB_TOKEN=${{secrets.DOC_PILOT_TOKEN}}
               git add .
-              git commit -m "add docstring"
+              git commit -m "added docstring 📝"
               git push
 
   add-documentation:
