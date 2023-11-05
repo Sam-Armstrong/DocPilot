@@ -11,6 +11,6 @@ Hey Claude, can you create a docstring for the '[fn_name]' function defined in t
 [docstring_example]
 </docstring_example>
 
-Only include ‘Raises’ if the function actively raises any exceptions, otherwise it can be ignored. It is critical that you only include the docstring itself, no preamble - your response needs to start with """.
+Only include ‘Raises’ if the function actively raises any exceptions, otherwise it can be ignored. Make sure that you include a description for all the arguments provided in the function signature.
 
 Assistant:

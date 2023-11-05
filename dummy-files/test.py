@@ -128,3 +128,69 @@ def reshape(
 
 
 
+@with_unsupported_dtypes({"0.4.19 and below": ("complex",)}, backend_version)
+def diagonal(
+    x: JaxArray,
+    /,
+    *,
+    offset: int = 0,
+    axis1: int = -2,
+    axis2: int = -1,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    if x.dtype != bool and not jnp.issubdtype(x.dtype, jnp.integer):
+        ret = jnp.diagonal(x, offset=offset, axis1=axis1, axis2=axis2)
+        ret_edited = jnp.diagonal(
+            x.at[1 / x == -jnp.inf].set(-jnp.inf),
+            offset=offset,
+            axis1=axis1,
+            axis2=axis2,
+        )
+        ret_edited = ret_edited.at[ret_edited == -jnp.inf].set(-0.0)
+        ret = ret.at[ret == ret_edited].set(ret_edited[ret == ret_edited])
+    else:
+        ret = jnp.diagonal(x, offset=offset, axis1=axis1, axis2=axis2)
+    return ret
+
+
+def tensorsolve(
+    x1: JaxArray,
+    x2: JaxArray,
+    /,
+    *,
+    axes: Optional[Union[int, Tuple[Sequence[int], Sequence[int]]]] = None,
+    out: Optional[JaxArray] = None,
+) -> JaxArray:
+    return jnp.linalg.tensorsolve(x1, x2, axes)
+
+
+@with_unsupported_dtypes(
+    {"0.4.19 and below": ("bfloat16", "float16", "complex")},
+    backend_version,
+)
+def eigh(
+    x: JaxArray, /, *, UPLO: str = "L", out: Optional[JaxArray] = None
+) -> Tuple[JaxArray]:
+    result_tuple = NamedTuple(
+        "eigh", [("eigenvalues", JaxArray), ("eigenvectors", JaxArray)]
+    )
+    eigenvalues, eigenvectors = jnp.linalg.eigh(x, UPLO=UPLO)
+    return result_tuple(eigenvalues, eigenvectors)
+
+
+@with_unsupported_dtypes(
+    {"0.4.19 and below": ("bfloat16", "float16", "complex")},
+    backend_version,
+)
+def eigvalsh(
+    x: JaxArray, /, *, UPLO: str = "L", out: Optional[JaxArray] = None
+) -> JaxArray:
+    return jnp.linalg.eigvalsh(x, UPLO=UPLO)
+
+
+@with_unsupported_dtypes({"0.4.19 and below": ("complex",)}, backend_version)
+def inner(x1: JaxArray, x2: JaxArray, /, *, out: Optional[JaxArray] = None) -> JaxArray:
+    x1, x2 = ivy.promote_types_of_inputs(x1, x2)
+    return jnp.inner(x1, x2)
+
+
