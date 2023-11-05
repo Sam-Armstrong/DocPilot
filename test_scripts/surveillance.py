@@ -10,12 +10,9 @@ from PIL import ImageTk, Image
 import cv2
 from cv2 import *
 import numpy as np
-import sys
 import time
-import argparse
 import imutils
 import keyboard
-from pathlib import Path
 from utils import *
 import time
 from skimage.restoration import wiener
@@ -40,7 +37,7 @@ directory = "Results"
 out_path = os.path.join(parent_dir, directory)
 try:
     os.mkdir(out_path)
-except OSError as error:
+except OSError:
     pass
 
 # ___________________INITALIZING THE GUI WINDOW______________________
@@ -88,13 +85,13 @@ def get_current_value1():
     -------
     int
         The integer value of the slider1 widget, representing the dilation parameter.
-
     """
     return int("{}".format(current_value1.get()))
 
 
 def slider_changed1(event):
-    """Updates the text label with the current value when the slider is changed.
+    """Updates the text label with the current value when the slider is
+    changed.
 
     The slider_changed1 function is called whenever the slider1 widget
     is moved to update the text label showing the current slider value.
@@ -107,7 +104,6 @@ def slider_changed1(event):
     Returns
     -------
     None
-
     """
     value_label1.configure(text=get_current_value1())
 
@@ -143,13 +139,13 @@ def get_current_value2():
     -------
     int
         The current integer value of current_value2.
-
     """
     return int("{}".format(current_value2.get()))
 
 
 def slider_changed2(event2):
-    """Updates the text label with the current value when the slider is changed.
+    """Updates the text label with the current value when the slider is
+    changed.
 
     This function is called whenever the slider2 widget is moved to update the
     text label displaying the current value.
@@ -162,7 +158,6 @@ def slider_changed2(event2):
     Returns
     -------
     None
-
     """
     value_label2.configure(text=get_current_value2())
 
@@ -382,7 +377,6 @@ def browseFiles():
     -------
     str
         The full path to the selected file.
-
     """
     source_file = filedialog.askopenfilename(
         initialdir="/",
@@ -443,7 +437,8 @@ def submit():
 
 
 def loadVideo(videopath):
-    """Loads a video from a given path and returns a list of grayscale image frames.
+    """Loads a video from a given path and returns a list of grayscale image
+    frames.
 
     This function takes in a video path, opens the video capture, reads frames one by one,
     converts each frame to grayscale, and appends it to a list. This list of grayscale frames
@@ -458,7 +453,6 @@ def loadVideo(videopath):
     -------
     list
         List of grayscale image frames from the video
-
     """
     global frame_width, frame_height
     ImagesSequence = []
@@ -507,7 +501,6 @@ def write_video(frames_list, fps, type, detur=False):
     None
 
     Writes the video file to disk.
-
     """
     if detur:
         Frames_BGR = [cv2.cvtColor(Frame, cv2.COLOR_GRAY2BGR) for Frame in frames_list]
@@ -544,7 +537,6 @@ def toggleCapture():
     It operates by setting the global capture variable and path variable to the video source,
     and releases the capture if it is already open. This allows the user to toggle between
     capturing frames for processing and stopping capture.
-
     """
     try:
         global capture
@@ -559,8 +551,8 @@ def toggleCapture():
 
 
 def objdetect():
-    """
-    Performs object detection on video frames using background subtraction and contour detection.
+    """Performs object detection on video frames using background subtraction
+    and contour detection.
 
     Reads video frames from a VideoCapture object, performs background subtraction between consecutive frames to identify moving objects, finds contours in the foreground mask to identify object regions, and draws green rectangles around detected objects in each frame.
 
@@ -655,8 +647,7 @@ def objdetect():
 
 
 def deturbulence():
-    """
-    Performs turbulence mitigation on a video stream.
+    """Performs turbulence mitigation on a video stream.
 
     Reads in frames from a video stream, registers the frames to reduce effects of turbulence,
     and performs deblurring on a region of interest. The enhanced frames are displayed.
@@ -670,7 +661,6 @@ def deturbulence():
     -------
     None
         The function does not return anything, it displays the enhanced frames.
-
     """
     try:
         global path
@@ -684,7 +674,7 @@ def deturbulence():
     N_FirstReference = 10
     L = 11
     patch_size = (L, L)  # (y,x) [pixels]. isoplanatic region
-    patch_half_size = (int((patch_size[0] - 1) / 2), int((patch_size[1] - 1) / 2))
+    (int((patch_size[0] - 1) / 2), int((patch_size[1] - 1) / 2))
     patches_shift = 1  # when equals to one we get full overlap.
     # (y,x). for each side: up/down/left/right
     registration_interval = (15, 15)
@@ -692,7 +682,7 @@ def deturbulence():
     m_lambda0 = 0.55 * 10**-6
     m_aperture = 0.06
     m_focal_length = 250 * 10**-3
-    fno = m_focal_length / m_aperture
+    m_focal_length / m_aperture
 
     # 3 options: 1. via Lucky region for N_firstRef frames, 2. mean of N_firstRef frames 3. first frame.
     cap = cv2.VideoCapture(path)
@@ -790,7 +780,7 @@ def deturbulence():
                     m_lambda0 = 0.55 * 10**-6
                     m_aperture_diameter = 0.055
                     m_focal_length = 250 * 10**-3
-                    fno = m_focal_length / m_aperture_diameter
+                    m_focal_length / m_aperture_diameter
                     ROI_reg_norm = ROI_registered / 255
 
                     k = (2 * np.pi) / m_lambda0
@@ -808,7 +798,7 @@ def deturbulence():
                     q = np.sqrt((XX - np.mean(Y)) ** 2 + (YY - np.mean(Y)) ** 2)
                     beta = k * m_aperture_diameter * q / 2 / L
                     AiryDisk = Io * (2 * j1(beta) / beta) ** 2
-                    AiryDisk_normalized = AiryDisk / AiryDisk.max()
+                    AiryDisk / AiryDisk.max()
                     deblurredROI_wiener = wiener(ROI_reg_norm, psf=AiryDisk, balance=7)
                     deblurredROI = deblurredROI_wiener
                     deblurredROI = deblurredROI / deblurredROI.max() * 255.0
@@ -842,8 +832,7 @@ def deturbulence():
 
 
 def endeturbulence():
-    """
-    Performs turbulence mitigation on a video stream.
+    """Performs turbulence mitigation on a video stream.
 
     Reads in frames from a video stream, registers the frames to reduce effects of turbulence,
     and performs deblurring on a region of interest. The enhanced frames are displayed.
@@ -857,7 +846,6 @@ def endeturbulence():
     -------
     None
         The function does not return anything, it displays the enhanced frames.
-
     """
     global path
     if flag_for_browse:
@@ -868,13 +856,12 @@ def endeturbulence():
     L = 11
     patch_size = (L, L)
     patch_half_size = (int((patch_size[0] - 1) / 2), int((patch_size[1] - 1) / 2))
-    patches_shift = 1
     registration_interval = (15, 15)
     R = 0.08
     m_lambda0 = 0.55 * 10**-6
     m_aperture = 0.06
     m_focal_length = 250 * 10**-3
-    fno = m_focal_length / m_aperture
+    m_focal_length / m_aperture
     readVideo = 1
     ReferenceInitializationOpt = 2
 
@@ -884,7 +871,6 @@ def endeturbulence():
     ImagesSequence = np.array(ImagesSequence).astype(dataType)
     roi = selectROI(ImagesSequence[0], resize_factor=2)
     roi_plate_250 = (1092, 830, 564, 228)
-    roi_test = (310, 279, 200, 128)
     if readVideo:
         ROI_coord = roi
     else:
@@ -937,7 +923,7 @@ def endeturbulence():
     enhancedFrames.append(ReferenceFrame)
     i = 0
     for frame in ImagesSequence[startRegistrationFrame:]:
-        t = time.time()
+        time.time()
         enhancedFrame = np.copy(frame)
         ROI = frame[
             ROI_coord[0] : ROI_coord[0] + ROI_coord[2],
@@ -1021,7 +1007,7 @@ def endeturbulence():
         m_lambda0 = 0.55 * 10**-6
         m_aperture_diameter = 0.055
         m_focal_length = 250 * 10**-3
-        fno = m_focal_length / m_aperture_diameter
+        m_focal_length / m_aperture_diameter
         ROI_reg_norm = ROI_registered / 255
         k = (2 * np.pi) / m_lambda0  # wavenumber of light in vacuum
         Io = 1.0  # relative intensity
@@ -1035,7 +1021,7 @@ def endeturbulence():
         q = np.sqrt((XX - np.mean(Y)) ** 2 + (YY - np.mean(Y)) ** 2)
         beta = k * m_aperture_diameter * q / 2 / L
         AiryDisk = Io * (2 * j1(beta) / beta) ** 2
-        AiryDisk_normalized = AiryDisk / AiryDisk.max()
+        AiryDisk / AiryDisk.max()
         deblurredROI_wiener = wiener(ROI_reg_norm, psf=AiryDisk, balance=7)
         deblurredROI = deblurredROI_wiener
         deblurredROI = deblurredROI / deblurredROI.max() * 255.0
@@ -1060,8 +1046,7 @@ def endeturbulence():
 
 
 def endeturbulence_old_version():
-    """
-    Performs turbulence mitigation on a video stream.
+    """Performs turbulence mitigation on a video stream.
 
     Reads in frames from a video stream, registers the frames to reduce effects of turbulence,
     and performs deblurring on a region of interest. The enhanced frames are displayed.
@@ -1075,7 +1060,6 @@ def endeturbulence_old_version():
     -------
     None
         The function does not return anything, it displays the enhanced frames.
-
     """
     source_file = browseFiles()
     dataType = np.float32
@@ -1083,13 +1067,12 @@ def endeturbulence_old_version():
     L = 11
     patch_size = (L, L)
     patch_half_size = (int((patch_size[0] - 1) / 2), int((patch_size[1] - 1) / 2))
-    patches_shift = 1
     registration_interval = (15, 15)
     R = 0.08
     m_lambda0 = 0.55 * 10**-6
     m_aperture = 0.06
     m_focal_length = 250 * 10**-3
-    fno = m_focal_length / m_aperture
+    m_focal_length / m_aperture
     readVideo = 1
     ReferenceInitializationOpt = 2
     video_path = source_file
@@ -1098,7 +1081,6 @@ def endeturbulence_old_version():
     ImagesSequence = np.array(ImagesSequence).astype(dataType)
     roi = selectROI(ImagesSequence[0], resize_factor=2)
     roi_plate_250 = (1092, 830, 564, 228)
-    roi_test = (310, 279, 200, 128)
     if readVideo:
         ROI_coord = roi
     else:
@@ -1235,7 +1217,7 @@ def endeturbulence_old_version():
         m_lambda0 = 0.55 * 10**-6
         m_aperture_diameter = 0.055
         m_focal_length = 250 * 10**-3
-        fno = m_focal_length / m_aperture_diameter
+        m_focal_length / m_aperture_diameter
         ROI_reg_norm = ROI_registered / 255
         k = (2 * np.pi) / m_lambda0  # wavenumber of light in vacuum
         Io = 1.0  # relative intensity
@@ -1249,7 +1231,7 @@ def endeturbulence_old_version():
         q = np.sqrt((XX - np.mean(Y)) ** 2 + (YY - np.mean(Y)) ** 2)
         beta = k * m_aperture_diameter * q / 2 / L
         AiryDisk = Io * (2 * j1(beta) / beta) ** 2
-        AiryDisk_normalized = AiryDisk / AiryDisk.max()
+        AiryDisk / AiryDisk.max()
         deblurredROI_wiener = wiener(ROI_reg_norm, psf=AiryDisk, balance=7)
         deblurredROI = deblurredROI_wiener
         deblurredROI = deblurredROI / deblurredROI.max() * 255.0
@@ -1269,8 +1251,8 @@ def endeturbulence_old_version():
 
 
 def deturbWithObjDetec():
-    """
-    Performs turbulence mitigation on input video and runs object detection on the enhanced video.
+    """Performs turbulence mitigation on input video and runs object detection
+    on the enhanced video.
 
     This function takes video input, performs iterative turbulence mitigation on each frame
     to enhance the video quality. It then runs object detection on the enhanced frames
@@ -1295,7 +1277,6 @@ def deturbWithObjDetec():
     Returns
     -------
     None
-
     """
     try:
         global path
@@ -1308,7 +1289,7 @@ def deturbWithObjDetec():
     N_FirstReference = 10
     L = 11
     patch_size = (L, L)  # (y,x) [pixels]. isoplanatic region
-    patch_half_size = (int((patch_size[0] - 1) / 2), int((patch_size[1] - 1) / 2))
+    (int((patch_size[0] - 1) / 2), int((patch_size[1] - 1) / 2))
     patches_shift = 1  # when equals to one we get full overlap.
     # (y,x). for each side: up/down/left/right
     registration_interval = (15, 15)
@@ -1316,13 +1297,12 @@ def deturbWithObjDetec():
     m_lambda0 = 0.55 * 10**-6
     m_aperture = 0.06
     m_focal_length = 250 * 10**-3
-    fno = m_focal_length / m_aperture
+    m_focal_length / m_aperture
     cap = cv2.VideoCapture(path)
     ImagesSequenceList = []
     ROI_arr_to_save = []
     ROI_enhanced_arr_to_save = []
     Combined_frames = []
-    Combined_frames_to_save = []
     itr_fps = 0
     start = time.time()
     # ImagesSequence = loadVideo(0)
@@ -1414,7 +1394,7 @@ def deturbWithObjDetec():
                     m_lambda0 = 0.55 * 10**-6
                     m_aperture_diameter = 0.055
                     m_focal_length = 250 * 10**-3
-                    fno = m_focal_length / m_aperture_diameter
+                    m_focal_length / m_aperture_diameter
                     ROI_reg_norm = ROI_registered / 255
 
                     k = (2 * np.pi) / m_lambda0
@@ -1431,7 +1411,7 @@ def deturbWithObjDetec():
                     q = np.sqrt((XX - np.mean(Y)) ** 2 + (YY - np.mean(Y)) ** 2)
                     beta = k * m_aperture_diameter * q / 2 / L
                     AiryDisk = Io * (2 * j1(beta) / beta) ** 2
-                    AiryDisk_normalized = AiryDisk / AiryDisk.max()
+                    AiryDisk / AiryDisk.max()
                     deblurredROI_wiener = wiener(ROI_reg_norm, psf=AiryDisk, balance=7)
                     deblurredROI = deblurredROI_wiener
                     deblurredROI = deblurredROI / deblurredROI.max() * 255.0

@@ -1430,6 +1430,23 @@ def inplace_update(
 def result_type(
     *arrays_and_dtypes: Union[tf.Tensor, tf.Variable, tf.DType],
 ) -> ivy.Dtype:
+    """Infers the dtype that would result from a set of arrays and dtypes.
+
+    Parameters
+    ----------
+    *arrays_and_dtypes : Union[tf.Tensor, tf.Variable, tf.DType]
+        The arrays and dtypes to infer the result type from.
+
+    Returns
+    -------
+    ivy.Dtype
+        The inferred result dtype.
+
+    Raises
+    ------
+    TypeError
+        If invalid input types are provided.
+    """
     if len(arrays_and_dtypes) <= 1:
         return tf.experimental.numpy.result_type(arrays_and_dtypes)
 

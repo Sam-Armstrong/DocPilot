@@ -30,4 +30,3 @@ This project is licensed under the MIT [License](https://github.com/Sam-Armstron
 This bot is powered by the Claude API, which is an excellent tool for generating high-quality docstrings.
 Inspiration from various open-source projects and communities that emphasize good code documentation.
 Thank you for using the GitHub bot for auto-generating docstrings with Claude API! Happy coding and documenting!
-

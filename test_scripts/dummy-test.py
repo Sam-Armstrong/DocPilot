@@ -1,6 +1,5 @@
 def hello_world():
-    """
-    Prints 'Hello world!' to the console.
+    """Prints 'Hello world!' to the console.
 
     This simple function exists solely to print a friendly greeting
     to the user when called. It takes no arguments and returns nothing.
@@ -17,15 +16,13 @@ def hello_world():
     ------
     None
     """
-    pass
 
 
 def inplace_decrement(
     x: Union[ivy.Array, paddle.Tensor],
     val: Union[ivy.Array, paddle.Tensor],
 ) -> ivy.Array:
-    """
-    Inplace subtract a value from an array.
+    """Inplace subtract a value from an array.
 
     This function directly subtracts val from x in place, modifying x rather than returning a new array.
 
@@ -63,8 +60,7 @@ def scatter_flat(
     reduction: str = "sum",
     out: Optional[paddle.Tensor] = None,
 ):
-    """
-    Scatters a tensor into a destination tensor according to indices.
+    """Scatters a tensor into a destination tensor according to indices.
 
     This functions scatters the `updates` tensor into the `out` tensor according
     to the indices specified in `indices`. The updates are added to the indices

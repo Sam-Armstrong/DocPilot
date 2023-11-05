@@ -1,6 +1,5 @@
 from anthropic import Anthropic
 import fileinput
-import sys
 
 
 filename = "dummy-files/test.py"
@@ -86,8 +85,7 @@ def add_docstring(key):
 
 
 def merge_docstring(file_fns_without_docstring):
-    """
-    Merges generated docstrings into the original files.
+    """Merges generated docstrings into the original files.
 
     This function takes the dictionary of filenames and functions without docstrings,
     iterates through each file, and inserts the generated docstring at the appropriate place.
@@ -102,7 +100,6 @@ def merge_docstring(file_fns_without_docstring):
     -------
     None
         The function edits the files in place.
-
     """
     for filename, fns_without_docstring in file_fns_without_docstring.items():
         with open(filename, "+rb") as f:
