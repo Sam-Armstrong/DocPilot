@@ -9,7 +9,7 @@ def _extract_relevant_info(text):
     start_index = text.find('"""')
     if start_index != -1:
         end_index = text.find('"""', start_index + 1)
-        extracted_text = text[start_index:end_index]
+        extracted_text = text[start_index:end_index+3]
         return extracted_text
     else:
         return None
