@@ -2985,3 +2985,35 @@ def fmax(
     """
     x1, x2 = promote_types_of_inputs(x1, x2)
     return torch.fmax(x1, x2, out=None)
+
+
+# no docstring
+def count_nonzero(
+    a: torch.Tensor,
+    /,
+    *,
+    axis: Optional[Union[int, Tuple[int, ...]]] = None,
+    keepdims: bool = False,
+    dtype: Optional[torch.dtype] = None,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    if isinstance(axis, list):
+        axis = tuple(axis)
+    if dtype is None:
+        x = torch.count_nonzero(a, dim=axis)
+    else:
+        x = torch.tensor(torch.count_nonzero(a, dim=axis), dtype=dtype)
+    if not keepdims:
+        return x
+    if isinstance(axis, int):
+        if axis == -1:
+            temp = x.dim() - 1
+            if temp < -1:
+                temp = 0
+            return x.unsqueeze(temp)
+        return x.unsqueeze(axis)
+    elif axis is not None:
+        for d in sorted(axis):
+            x = x.unsqueeze(d)
+        return x
+    return x
