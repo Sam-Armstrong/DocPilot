@@ -46,7 +46,6 @@ def multi_head_attention(
     training: Optional[bool] = False,
     out: torch.Tensor = None,
 ) -> torch.Tensor:
-    
     if key is None and value is None:
         key = value = query
     emb_dim = _get_embed_dim(
@@ -128,7 +127,6 @@ def linear(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    
     return torch.nn.functional.linear(x, weight, bias)
 
 
@@ -137,24 +135,24 @@ linear.partial_mixed_handler = lambda x, weight, **kwargs: weight.ndim == 2
 
 def _ff_xd_before_conv(x, filters, dims, filter_format, x_dilations):
     """Adds dilations to the input before performing convolution.
-    
-    This function adds dilations to the input tensor ``x`` before performing 
-    convolution with ``filters``. 
-    
+
+    This function adds dilations to the input tensor ``x`` before performing
+    convolution with ``filters``.
+
     Parameters
     ----------
     x : torch.Tensor
         The input tensor.
-    filters : torch.Tensor 
+    filters : torch.Tensor
         The convolution filters.
     dims : int
         The number of dimensions for convolution.
     filter_format : str
         The format of the filters, either 'channel_first' or 'channel_last'.
     x_dilations : int or tuple of ints
-        The dilation rates to apply to the input tensor. Can be a single int 
+        The dilation rates to apply to the input tensor. Can be a single int
         if same dilation along all axes, or a tuple specifying dilation for each axis.
-    
+
     Returns
     -------
     tuple
@@ -162,7 +160,7 @@ def _ff_xd_before_conv(x, filters, dims, filter_format, x_dilations):
             The input tensor after dilations have been applied.
         filters : torch.Tensor
             The (optionally permuted) convolution filters.
-            
+
     """
     if filter_format == "channel_last":
         filters = filters.permute(-1, -2, *range(dims))
@@ -189,38 +187,38 @@ def _pad_before_conv(
 ):
     """
     Pads the input x before passing it into a convolution operation.
-    
-    This handles padding in the case where strides > 1 or dilations > 1, 
+
+    This handles padding in the case where strides > 1 or dilations > 1,
     which require padding the input in a non-symmetric way to match PyTorch's
     behavior.
-    
+
     Parameters
     ----------
     x : torch.Tensor
         The input tensor to be padded.
-    filters : torch.Tensor 
+    filters : torch.Tensor
         The filters/kernel for the convolution.
     strides : int or tuple of ints
         The stride for the convolution.
-    padding : str, int or tuple of tuple of ints 
+    padding : str, int or tuple of tuple of ints
         The padding mode or amount of padding to apply.
     dims : int
         The number of spatial dimensions for the convolution.
     dilations: int or tuple of ints
         The dilation amounts.
     filter_format : str
-        Either 'channel_first' or 'channel_last' indicating the ordering of 
+        Either 'channel_first' or 'channel_last' indicating the ordering of
         channels in filters.
-    
+
     Returns
     -------
     x_padded : torch.Tensor
         The input x with the appropriate padding applied.
-    padding_str : str 
+    padding_str : str
         The padding argument to pass to the PyTorch convolution function.
         This will be 'valid' if custom padding was applied to x, or the original
         padding mode otherwise.
-    
+
     """
     dilations = [dilations] * dims if isinstance(dilations, int) else dilations
     strides = [strides] * dims if isinstance(strides, int) else strides
@@ -259,38 +257,38 @@ def _pad_before_conv_tranpose(
 ):
     """
     Pads the input x before passing it into a convolution operation.
-    
-    This handles padding in the case where strides > 1 or dilations > 1, 
+
+    This handles padding in the case where strides > 1 or dilations > 1,
     which require padding the input in a non-symmetric way to match PyTorch's
     behavior.
-    
+
     Parameters
     ----------
     x : torch.Tensor
         The input tensor to be padded.
-    filters : torch.Tensor 
+    filters : torch.Tensor
         The filters/kernel for the convolution.
     strides : int or tuple of ints
         The stride for the convolution.
-    padding : str, int or tuple of tuple of ints 
+    padding : str, int or tuple of tuple of ints
         The padding mode or amount of padding to apply.
     dims : int
         The number of spatial dimensions for the convolution.
     dilations: int or tuple of ints
         The dilation amounts.
     filter_format : str
-        Either 'channel_first' or 'channel_last' indicating the ordering of 
+        Either 'channel_first' or 'channel_last' indicating the ordering of
         channels in filters.
-    
+
     Returns
     -------
     x_padded : torch.Tensor
         The input x with the appropriate padding applied.
-    padding_str : str 
+    padding_str : str
         The padding argument to pass to the PyTorch convolution function.
         This will be 'valid' if custom padding was applied to x, or the original
         padding mode otherwise.
-    
+
     """
     if output_shape is None:
         out_shape = [
@@ -465,37 +463,37 @@ def conv2d_transpose(
     out: Optional[torch.Tensor] = None,
 ):
     """Transpose convolution (deconvolution) layer.
-    
-    Performs a 2D transpose convolution (deconvolution) on an input tensor, 
-    using the provided filters, strides, padding and output padding. 
-    
+
+    Performs a 2D transpose convolution (deconvolution) on an input tensor,
+    using the provided filters, strides, padding and output padding.
+
     Parameters
     ----------
     x : torch.Tensor
         Input tensor to perform transpose convolution on.
-    filters : torch.Tensor 
-        Convolution filters.  
+    filters : torch.Tensor
+        Convolution filters.
     strides : Union[int, Tuple[int, int]]
         Stride sizes for the transpose convolution.
     padding : str
-        Type of padding, either 'VALID' or 'SAME'.  
+        Type of padding, either 'VALID' or 'SAME'.
     output_shape : Optional[Union[ivy.NativeShape, Sequence[int]]]
         Shape of the output produced by the transpose convolution. If not provided,
-        calculated automatically based on the input size, filter size and strides.  
+        calculated automatically based on the input size, filter size and strides.
     data_format : str
         Either 'NHWC' or 'NCHW' indicating the data format.
     dilations : Union[int, Tuple[int, int]]
-        Dilation factors for the filters.  
-    bias : Optional[torch.Tensor] 
-        Optional bias tensor to add to the output. 
+        Dilation factors for the filters.
+    bias : Optional[torch.Tensor]
+        Optional bias tensor to add to the output.
     out : Optional[torch.Tensor]
         Optional output tensor to write the result to.
-    
+
     Returns
     -------
     torch.Tensor
         Tensor result of the 2D transpose convolution.
-    
+
     """
     if data_format == "NHWC":
         x = x.permute(0, 3, 1, 2)
@@ -663,7 +661,6 @@ def conv_general_dilated(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ):
-    
     # permuting dims based on formats
     if data_format == "channel_last":
         x = x.permute(0, dims + 1, *range(1, dims + 1))
@@ -726,7 +723,6 @@ def conv_general_transpose(
     bias: Optional[torch.Tensor] = None,
     out: Optional[torch.Tensor] = None,
 ):
-    
     if data_format == "channel_last":
         x = x.permute(0, dims + 1, *range(1, dims + 1))
     strides = [strides] * dims if isinstance(strides, int) else strides
@@ -797,35 +793,35 @@ def scaled_dot_product_attention_v_2p0p0_and_above(
 ):
     """
     Performs scaled dot-product attention.
-    
-    Scaled dot-product attention is an attention mechanism that takes 
+
+    Scaled dot-product attention is an attention mechanism that takes
     in a query, key and value, and returns an attention weight representing
     the relevance of each value to the query. This implementation includes
     optional masking and scaling.
-    
+
     This version is for PyTorch 2.0.0 and above.
-    
+
     Parameters
     ----------
     q : torch.Tensor
         Query tensor of shape (..., query_seq_len, dk).
     k : torch.Tensor
-        Key tensor of shape (..., key_seq_len, dk).  
+        Key tensor of shape (..., key_seq_len, dk).
     v : torch.Tensor
         Value tensor of shape (..., key_seq_len, dv).
     scale : float
-        Scaling factor for the dot products.   
+        Scaling factor for the dot products.
     mask : torch.Tensor, optional
         Mask tensor applied to the dot product scores before softmax, shape
         (..., query_seq_len, key_seq_len).
     out : torch.Tensor, optional
         Output tensor.
-            
+
     Returns
     -------
     torch.Tensor
         Attention weight tensor of shape (..., query_seq_len, key_seq_len).
-    
+
     """
     pass
 
@@ -843,7 +839,6 @@ def minimum(
     use_where: bool = True,
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    
     x1, x2 = ivy.promote_types_of_inputs(x1, x2)
     if use_where:
         return torch.where(x1 <= x2, x1, x2, out=out)
@@ -865,23 +860,23 @@ def maximum(
 ) -> torch.Tensor:
     """
     Computes the maximum between two arrays elementwise.
-    
+
     Parameters
     ----------
     x1 : array_like
         First array to compare.
-    x2 : array_like 
+    x2 : array_like
         Second array to compare. Must be compatible with x1 (see Broadcasting).
     use_where : bool, optional
-        If True, calculates the maximum using a where function. Otherwise uses torch.maximum. Default is True.  
+        If True, calculates the maximum using a where function. Otherwise uses torch.maximum. Default is True.
     out : ndarray, optional
         Output array. Must be compatible with the expected output.
-    
+
     Returns
     -------
     ret : ndarray or scalar
         The maximum of x1 and x2, element-wise. Returns scalar if both x1 and x2 are scalars.
-    
+
     Examples
     --------
     >>> x1 = [1, 4 ,7]
@@ -905,19 +900,19 @@ def reciprocal(
 ) -> torch.Tensor:
     """
     Computes the reciprocal of the input tensor element-wise.
-    
+
     Parameters
     ----------
     x : Tensor
         The input tensor.
     out : Tensor, optional
-        Optional output tensor to store the result.    
-    
+        Optional output tensor to store the result.
+
     Returns
     -------
     ret : Tensor
         A tensor containing the reciprocal of the input tensor.
-    
+
     """
     x = _cast_for_unary_op(x)
     return torch.reciprocal(x, out=out)
@@ -932,21 +927,21 @@ reciprocal.support_native_out = True
 @handle_numpy_arrays_in_specific_backend
 def deg2rad(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Converts angles from degrees to radians element-wise.
-    
+
     Parameters
     ----------
     x : array_like
         Input array in degrees.
-        
+
     out : optional
-        A location into which the result is stored. If provided, it must have a shape that the 
+        A location into which the result is stored. If provided, it must have a shape that the
         inputs broadcast to. If not provided or None, a freshly-allocated array is returned.
-        
+
     Returns
     -------
     ret : ndarray
         The values in radians. This is a scalar if x is a scalar.
-    
+
     """
     return torch.deg2rad(x, out=out)
 
@@ -961,22 +956,22 @@ deg2rad.support_native_out = True
 def rad2deg(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
     """
     Converts angles from radians to degrees.
-    
+
     Parameters
     ----------
     x : Tensor
         Input tensor in radians.
     out : Tensor, optional
         Output tensor.
-    
+
     Returns
     -------
     Tensor
         A tensor containing the angles in degrees.
-    
+
     Examples
     --------
-    >>> rad2deg(3.14) 
+    >>> rad2deg(3.14)
     180.0
     """
     return torch.rad2deg(x, out=out)
@@ -995,25 +990,25 @@ def trunc_divide(
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
-    Divides the first input array by the second input array element-wise. 
-    
+    Divides the first input array by the second input array element-wise.
+
     Supports broadcasting. Promotes inputs to a common dtype.
-    
+
     Parameters
     ----------
     x1 : array_like
-        Numerator array. 
-    x2 : array_like 
+        Numerator array.
+    x2 : array_like
         Denominator array.
     out : Optional[torch.Tensor], optional
-        Output tensor. If provided, the result will be placed in this tensor. 
+        Output tensor. If provided, the result will be placed in this tensor.
         Default is None.
-    
+
     Returns
     -------
     ret : torch.Tensor
         Element-wise division result.
-    
+
     Raises
     ------
     ZeroDivisionError
@@ -1032,18 +1027,18 @@ def trunc_divide(
 def isreal(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
     """
     Checks element-wise if input contains exclusively real values.
-    
+
     Parameters
     ----------
     x : array_like
-        Input array. 
-    
+        Input array.
+
     Returns
     -------
     ret : ndarray
-        Boolean array of same shape as x indicating whether each element 
+        Boolean array of same shape as x indicating whether each element
         is real.
-    
+
     Examples
     --------
     >>> x = np.array([1+1j, 1+0j, 4.5, 3, 2, 2j])
@@ -1066,22 +1061,22 @@ def fmod(
     out: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """
-    Calculates the remainder of dividing x1 by x2 element-wise. 
-    
+    Calculates the remainder of dividing x1 by x2 element-wise.
+
     Parameters
     ----------
     x1 : array_like
         Dividend input array.
-    x2 : array_like  
+    x2 : array_like
         Divisor input array.
     out : Optional[torch.Tensor], optional
         Output array. If provided, the result will be placed in this array.
-    
+
     Returns
     -------
     tensor
         The remainder of dividing x1 by x2.
-        
+
     """
     x1, x2 = promote_types_of_inputs(x1, x2)
     return torch.fmod(x1, x2, out=None)
@@ -1099,29 +1094,29 @@ def gcd(
 ) -> torch.Tensor:
     """
     Calculates the greatest common divisor between two numbers or tensors elementwise.
-    
+
     Parameters
     ----------
     x1 : int, float, tensor-like
         The first input array or number.
-    x2 : int, float, tensor-like        
+    x2 : int, float, tensor-like
         The second input array or number.
-    out : tensor or None, optional          
+    out : tensor or None, optional
         A location in which to store the results. If provided, it must have a shape
         that the inputs broadcast to. If not provided or None, a fresh tensor is
-        allocated. 
-        
+        allocated.
+
     Returns
     -------
     ret : tensor
         The greatest common divisor of the elements of x1 and x2.
-        
+
     Examples
     --------
     >>> gcd(12, 18)
     6
-    
-    >>> x1 = [12, 18, 33]  
+
+    >>> x1 = [12, 18, 33]
     >>> x2 = [6, 9, 15]
     >>> gcd(x1, x2)
     array([6, 9, 3])
@@ -1142,7 +1137,7 @@ def angle(
 ) -> torch.Tensor:
     """
     Calculates the angle of the complex input array in radians or degrees.
-    
+
     Parameters
     ----------
     input : array_like
@@ -1150,15 +1145,15 @@ def angle(
     deg : bool, optional
         If True, returns the angle in degrees instead of radians. Default is radians.
     out : ndarray, optional
-        A location in which to store the results. If provided, it must have a shape that the 
+        A location in which to store the results. If provided, it must have a shape that the
         inputs broadcast to. If not provided or None, a freshly-allocated array is returned.
-    
+
     Returns
     -------
     angle_array : ndarray
         An array containing the angle of each element in radians, unless deg=True.
         If deg=True, the angles are returned in degrees.
-    
+
     """
     if deg:
         return torch.angle(input, out=out) * (180 / pi)
@@ -1189,23 +1184,23 @@ def nan_to_num(
 def real(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
     """
     Returns the real part of the complex argument.
-    
+
     Parameters
     ----------
     x : array_like
         Input array.
-    
+
     out : array_like, optional
-        Optional output array to place results in. Must be of the same shape 
+        Optional output array to place results in. Must be of the same shape
         and dtype as the expected output.
-    
+
     Returns
     -------
     real_x : array_like
-        The real component of the complex argument. If `x` is real, the type 
-        of `real_x` is float.  If `x` is complex, the type of `real_x` is 
+        The real component of the complex argument. If `x` is real, the type
+        of `real_x` is float.  If `x` is complex, the type of `real_x` is
         the same as `x.real`.
-    
+
     Examples
     --------
     >>> x = 3 + 4j
@@ -1213,6 +1208,7 @@ def real(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Ten
     3.0
     """
     return torch.real(x)
+
 
 @with_unsupported_dtypes(
     {"2.5.1 and below": ("float16", "int16", "int8")}, backend_version
@@ -1353,44 +1349,45 @@ def gather_nd(
 def hi_world():
     """
     Prints 'hi world' to the console.
-    
+
     This simple function prints the string 'hi world' to the console/stdout when called.
     It takes no arguments and returns nothing. Its purpose is for a simple test and example.
-    
+
     Parameters
     ----------
     None
-    
+
     Returns
     -------
     None
-    
+
     Raises
     ------
     None
     """
     pass
 
+
 def inplace_increment(
     x: Union[ivy.Array, paddle.Tensor],
     val: Union[ivy.Array, paddle.Tensor],
 ) -> ivy.Array:
     """Inplace increments x by val.
-    
+
     Increments x in-place by val. Both x and val must be arrays or tensors.
-    
+
     Parameters
     ----------
     x : array_like
         Input array to be incremented.
     val : array_like
         Array containing values to increment x by.
-        
+
     Returns
-    -------  
+    -------
     ivy.Array
         x incremented in-place by val.
-    
+
     """
     (x_native, val_native), _ = ivy.args_to_native(x, val)
     if ivy.is_ivy_array(x):
@@ -1398,6 +1395,7 @@ def inplace_increment(
     else:
         target = x
     return paddle.assign(paddle_backend.add(x_native, val_native), target)
+
 
 def inplace_update(
     x: Union[ivy.Array, paddle.Tensor],
@@ -1409,7 +1407,7 @@ def inplace_update(
 ) -> ivy.Array:
     """
     Updates the array x inplace with the values from array val.
-    
+
     Parameters
     ----------
     x : array_like
@@ -1418,18 +1416,18 @@ def inplace_update(
         The array containing the values to update x with.
     ensure_in_backend : bool, optional
         If True, ensures the updated x is in the backend framework. Default is False.
-    keep_input_dtype : bool, optional  
+    keep_input_dtype : bool, optional
         If True, keeps the dtype of x the same after the update. Default is False.
-    
+
     Returns
     -------
     x : array_like
         The updated array x.
-    
+
     Raises
     ------
     ValueError
-        If x is not an array. 
+        If x is not an array.
     """
     _check_inplace_update_support(x, ensure_in_backend)
     if ivy.is_array(x) and ivy.is_array(val):
@@ -1450,7 +1448,3 @@ def inplace_update(
         return x
     else:
         return val
-    
-    
-
-

@@ -1,7 +1,7 @@
 name: Doc-Pilot
 on: [push, pull_request]
 
-permissions: 
+permissions:
     actions: read
     contents: write
 
@@ -16,15 +16,15 @@ jobs:
               submodules: "recursive"
               ref: ${{github.head_ref}}
               fetch-depth: 100
-        
+
           - name: Fetch Commit Changes
             id: fetch_changes
             run: |
               cd DocPilot
               # files changed can be accessed through ${HOME}/files.json
-              git diff HEAD~1 HEAD --output="diff.txt"  
+              git diff HEAD~1 HEAD --output="diff.txt"
 
-              
+
           - name: Install Python Clients
             run: |
               pip install anthropic
@@ -35,7 +35,7 @@ jobs:
             run: |
               cd DocPilot
               python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
-              rm -rf diff.txt temp.txt     
+              rm -rf diff.txt temp.txt
 
           - name: Check if there are changes 📝
             id: check
@@ -45,11 +45,12 @@ jobs:
                   echo "changes=true" >> $GITHUB_OUTPUT
                 fi
 
-          - name: Run Linter Bot 
+          - name: Run Linter Bot
             continue-on-error: true
             run: |
+              cd DocPilot
               pre-commit run -a
-          
+
           - name: Set up Git
             run: |
               git config --global user.email "actions@github.com"

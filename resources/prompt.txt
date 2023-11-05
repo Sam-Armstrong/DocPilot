@@ -11,6 +11,6 @@ You are an expert software engineer with a passion for well documented and clear
 [docstring_example]
 </docstring_example>
 
-Feel free to be fairly vague on any parts of the docstring that you aren't 100% sure about, but make sure you acknowledge all arguments of a function.
+Feel free to be fairly vague on any parts of the docstring that you aren't 100% sure about, but make sure you acknowledge all arguments of a function. Also try explaining what the function does a little bit.
 
 Assistant:
