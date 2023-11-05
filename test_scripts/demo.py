@@ -4,11 +4,42 @@ import numpy as np
 def one_hot(
     indices,
     depth,
-    on_value = None,
-    off_value = None,
-    axis = None,
-    dtype = None,
+    on_value=None,
+    off_value=None,
+    axis=None,
+    dtype=None,
 ):
+    """Convert a vector of indices into a matrix with one-hot encodings as
+    columns.
+
+    Parameters
+    ----------
+    indices : array_like
+        Indices to convert to one-hot encodings.
+    depth : int
+        Size of one-hot dimension.
+    on_value : float, optional
+        Value to fill in output when class is hot, by default 1.
+    off_value : float, optional
+        Value to fill in output when class is not hot, by default 0.
+    axis : int, optional
+        Axis along which one-hot encodings are added.
+    dtype : data-type, optional
+        Data-type of the one-hot matrix.
+
+    Returns
+    -------
+    ret : ndarray
+        One-hot matrix corresponding to indices.
+
+    Examples
+    --------
+    >>> indices = [0, 1, 2]
+    >>> one_hot(indices, depth=3)
+    array([[1., 0., 0.],
+           [0., 1., 0.],
+           [0., 0., 1.]])
+    """
     on_none = on_value is None
     off_none = off_value is None
 
