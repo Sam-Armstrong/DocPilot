@@ -66,3 +66,9 @@ jobs:
               git add .
               git commit -m "add docstring"
               git push
+
+  add-documentation:
+    name: trigger doc-builder for project
+    uses: ./.github/workflows/doc-builder.yml
+    needs: run-docstring-integration
+
