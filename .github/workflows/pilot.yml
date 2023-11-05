@@ -44,7 +44,7 @@ jobs:
 
           - name:  Run pre-commit 🚀
             continue-on-error: true
-            run:
+            run: |
               cd DocPilot
               pre-commit run -a $changed_files
 
