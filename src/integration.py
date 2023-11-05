@@ -33,7 +33,7 @@ def generate_docstring(file_str, fn_name, key):
 
     completion = anthropic.completions.create(
         model="claude-2",
-        max_tokens_to_sample=300,
+        max_tokens_to_sample=1000,
         prompt=prompt,
     )
     docstring = _extract_relevant_info(completion.completion)
