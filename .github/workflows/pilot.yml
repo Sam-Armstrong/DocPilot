@@ -38,6 +38,7 @@ jobs:
             run: |
               cd DocPilot
               python3 claude/script.py ${{secrets.ANTHROPIC_API_KEY}}
+              rm -rf diff.txt temp.txt
 
           - name: Check if there are changes 📝
             id: check
