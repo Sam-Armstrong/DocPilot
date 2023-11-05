@@ -827,6 +827,408 @@ def scaled_dot_product_attention_v_2p0p0_and_above(
         Attention weight tensor of shape (..., query_seq_len, key_seq_len).
     
     """
+<<<<<<< Updated upstream
     if isinstance(mask, torch.Tensor):
         mask = torch.where(mask == 0, -torch.inf, 0)
     return torch.nn.functional.scaled_dot_product_attention(q, k, v, attn_mask=mask)
+=======
+    x = _cast_for_unary_op(x)
+    return torch.erf(x, out=out)
+
+
+erf.support_native_out = True
+
+
+@with_unsupported_dtypes({"2.1.0 and below": ("complex",)}, backend_version)
+@handle_numpy_arrays_in_specific_backend
+def minimum(
+    x1: Union[float, torch.Tensor],
+    x2: Union[float, torch.Tensor],
+    /,
+    *,
+    use_where: bool = True,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    
+    x1, x2 = ivy.promote_types_of_inputs(x1, x2)
+    if use_where:
+        return torch.where(x1 <= x2, x1, x2, out=out)
+    return torch.minimum(x1, x2, out=out)
+
+
+minimum.support_native_out = True
+
+
+@with_unsupported_dtypes({"2.1.0 and below": ("complex",)}, backend_version)
+@handle_numpy_arrays_in_specific_backend
+def maximum(
+    x1: Union[float, torch.Tensor],
+    x2: Union[float, torch.Tensor],
+    /,
+    *,
+    use_where: bool = True,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """
+    Computes the maximum between two arrays elementwise.
+    
+    Parameters
+    ----------
+    x1 : array_like
+        First array to compare.
+    x2 : array_like 
+        Second array to compare. Must be compatible with x1 (see Broadcasting).
+    use_where : bool, optional
+        If True, calculates the maximum using a where function. Otherwise uses torch.maximum. Default is True.  
+    out : ndarray, optional
+        Output array. Must be compatible with the expected output.
+    
+    Returns
+    -------
+    ret : ndarray or scalar
+        The maximum of x1 and x2, element-wise. Returns scalar if both x1 and x2 are scalars.
+    
+    Examples
+    --------
+    >>> x1 = [1, 4 ,7]
+    >>> x2 = [3, 2, 2]
+    >>> maximum(x1, x2)
+    [3, 4, 7]
+    """
+    x1, x2 = ivy.promote_types_of_inputs(x1, x2)
+    if use_where:
+        return torch.where(x1 >= x2, x1, x2, out=out)
+    return torch.maximum(x1, x2, out=out)
+
+
+maximum.support_native_out = True
+
+
+@with_unsupported_dtypes({"2.1.0 and below": ("float16",)}, backend_version)
+@handle_numpy_arrays_in_specific_backend
+def reciprocal(
+    x: Union[float, torch.Tensor], /, *, out: Optional[torch.Tensor] = None
+) -> torch.Tensor:
+    """
+    Computes the reciprocal of the input tensor element-wise.
+    
+    Parameters
+    ----------
+    x : Tensor
+        The input tensor.
+    out : Tensor, optional
+        Optional output tensor to store the result.    
+    
+    Returns
+    -------
+    ret : Tensor
+        A tensor containing the reciprocal of the input tensor.
+    
+    """
+    x = _cast_for_unary_op(x)
+    return torch.reciprocal(x, out=out)
+
+
+reciprocal.support_native_out = True
+
+
+@with_unsupported_dtypes(
+    {"2.1.0 and below": ("complex64", "complex128")}, backend_version
+)
+@handle_numpy_arrays_in_specific_backend
+def deg2rad(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """Converts angles from degrees to radians element-wise.
+    
+    Parameters
+    ----------
+    x : array_like
+        Input array in degrees.
+        
+    out : optional
+        A location into which the result is stored. If provided, it must have a shape that the 
+        inputs broadcast to. If not provided or None, a freshly-allocated array is returned.
+        
+    Returns
+    -------
+    ret : ndarray
+        The values in radians. This is a scalar if x is a scalar.
+    
+    """
+    return torch.deg2rad(x, out=out)
+
+
+deg2rad.support_native_out = True
+
+
+@with_unsupported_dtypes(
+    {"2.1.0 and below": ("complex64", "complex128")}, backend_version
+)
+@handle_numpy_arrays_in_specific_backend
+def rad2deg(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """
+    Converts angles from radians to degrees.
+    
+    Parameters
+    ----------
+    x : Tensor
+        Input tensor in radians.
+    out : Tensor, optional
+        Output tensor.
+    
+    Returns
+    -------
+    Tensor
+        A tensor containing the angles in degrees.
+    
+    Examples
+    --------
+    >>> rad2deg(3.14) 
+    180.0
+    """
+    return torch.rad2deg(x, out=out)
+
+
+rad2deg.support_native_out = True
+
+
+@with_unsupported_dtypes({"2.1.0 and below": ("complex",)}, backend_version)
+@handle_numpy_arrays_in_specific_backend
+def trunc_divide(
+    x1: Union[float, torch.Tensor],
+    x2: Union[float, torch.Tensor],
+    /,
+    *,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """
+    Divides the first input array by the second input array element-wise. 
+    
+    Supports broadcasting. Promotes inputs to a common dtype.
+    
+    Parameters
+    ----------
+    x1 : array_like
+        Numerator array. 
+    x2 : array_like 
+        Denominator array.
+    out : Optional[torch.Tensor], optional
+        Output tensor. If provided, the result will be placed in this tensor. 
+        Default is None.
+    
+    Returns
+    -------
+    ret : torch.Tensor
+        Element-wise division result.
+    
+    Raises
+    ------
+    ZeroDivisionError
+        If attempting to divide by zero.
+    """
+    x1, x2 = ivy.promote_types_of_inputs(x1, x2)
+    ret = torch.div(x1, x2, rounding_mode="trunc")
+    if ivy.is_float_dtype(x1.dtype):
+        ret = ret.to(x1.dtype)
+    else:
+        ret = ret.to(ivy.default_float_dtype(as_native=True))
+    return ret
+
+
+@handle_numpy_arrays_in_specific_backend
+def isreal(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """
+    Checks element-wise if input contains exclusively real values.
+    
+    Parameters
+    ----------
+    x : array_like
+        Input array. 
+    
+    Returns
+    -------
+    ret : ndarray
+        Boolean array of same shape as x indicating whether each element 
+        is real.
+    
+    Examples
+    --------
+    >>> x = np.array([1+1j, 1+0j, 4.5, 3, 2, 2j])
+    >>> np.isreal(x)
+    array([False,  True,  True,  True,  True, False])
+    """
+    return torch.isreal(x)
+
+
+@with_unsupported_dtypes(
+    {"2.1.0 and below": ("bfloat16", "complex")},
+    backend_version,
+)
+@handle_numpy_arrays_in_specific_backend
+def fmod(
+    x1: torch.Tensor,
+    x2: torch.Tensor,
+    /,
+    *,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """
+    Calculates the remainder of dividing x1 by x2 element-wise. 
+    
+    Parameters
+    ----------
+    x1 : array_like
+        Dividend input array.
+    x2 : array_like  
+        Divisor input array.
+    out : Optional[torch.Tensor], optional
+        Output array. If provided, the result will be placed in this array.
+    
+    Returns
+    -------
+    tensor
+        The remainder of dividing x1 by x2.
+        
+    """
+    x1, x2 = promote_types_of_inputs(x1, x2)
+    return torch.fmod(x1, x2, out=None)
+
+
+fmod.support_native_out = True
+
+
+def gcd(
+    x1: Union[torch.Tensor, int, list, tuple],
+    x2: Union[torch.Tensor, float, list, tuple],
+    /,
+    *,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """
+    Calculates the greatest common divisor between two numbers or tensors elementwise.
+    
+    Parameters
+    ----------
+    x1 : int, float, tensor-like
+        The first input array or number.
+    x2 : int, float, tensor-like        
+        The second input array or number.
+    out : tensor or None, optional          
+        A location in which to store the results. If provided, it must have a shape
+        that the inputs broadcast to. If not provided or None, a fresh tensor is
+        allocated. 
+        
+    Returns
+    -------
+    ret : tensor
+        The greatest common divisor of the elements of x1 and x2.
+        
+    Examples
+    --------
+    >>> gcd(12, 18)
+    6
+    
+    >>> x1 = [12, 18, 33]  
+    >>> x2 = [6, 9, 15]
+    >>> gcd(x1, x2)
+    array([6, 9, 3])
+    """
+    x1, x2 = promote_types_of_inputs(x1, x2)
+    return torch.gcd(x1, x2, out=out)
+
+
+gcd.support_native_out = True
+
+
+def angle(
+    input: torch.Tensor,
+    /,
+    *,
+    deg: Optional[bool] = None,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """
+    Calculates the angle of the complex input array in radians or degrees.
+    
+    Parameters
+    ----------
+    input : array_like
+        Input array.
+    deg : bool, optional
+        If True, returns the angle in degrees instead of radians. Default is radians.
+    out : ndarray, optional
+        A location in which to store the results. If provided, it must have a shape that the 
+        inputs broadcast to. If not provided or None, a freshly-allocated array is returned.
+    
+    Returns
+    -------
+    angle_array : ndarray
+        An array containing the angle of each element in radians, unless deg=True.
+        If deg=True, the angles are returned in degrees.
+    
+    """
+    if deg:
+        return torch.angle(input, out=out) * (180 / pi)
+    else:
+        return torch.angle(input, out=out)
+
+
+angle.support_native_out = True
+
+
+def nan_to_num(
+    x: torch.Tensor,
+    /,
+    *,
+    copy: bool = True,
+    nan: Union[float, int] = 0.0,
+    posinf: Optional[Union[float, int]] = None,
+    neginf: Optional[Union[float, int]] = None,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    if copy:
+        return torch.nan_to_num(x, nan=nan, posinf=posinf, neginf=neginf, out=out)
+    else:
+        x = torch.nan_to_num(x, nan=nan, posinf=posinf, neginf=neginf)
+        return x
+
+
+def real(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """
+    Returns the real part of the complex argument.
+    
+    Parameters
+    ----------
+    x : array_like
+        Input array.
+    
+    out : array_like, optional
+        Optional output array to place results in. Must be of the same shape 
+        and dtype as the expected output.
+    
+    Returns
+    -------
+    real_x : array_like
+        The real component of the complex argument. If `x` is real, the type 
+        of `real_x` is float.  If `x` is complex, the type of `real_x` is 
+        the same as `x.real`.
+    
+    Examples
+    --------
+    >>> x = 3 + 4j
+    >>> real(x)
+    3.0
+    """
+    return torch.real(x)
+
+@with_unsupported_dtypes(
+    {"2.5.1 and below": ("float16", "int16", "int8")}, backend_version
+)
+def get_item(
+    x: paddle.Tensor,
+    /,
+    query: Union[paddle.Tensor, Tuple],
+    *,
+    copy: bool = None,
+) -> paddle.Tensor:
+    return x.__getitem__(query)
+>>>>>>> Stashed changes

@@ -31,6 +31,14 @@ jobs:
               git diff HEAD~1 HEAD --output="temp.txt"
               grep '^\+' temp.txt > diff.txt     
 
+          - name: Check Json file
+            shell: python
+            run: |
+              import json
+              with open(~/files.json, r) as f:
+                data = json.load(f)
+              print(data)
+              
           - name: Install Python Clients
             run: |
               pip install anthropic
