@@ -2946,3 +2946,14 @@ def real(x: torch.Tensor, /, *, out: Optional[torch.Tensor] = None) -> torch.Ten
     tensor(1.)
     """
     return torch.real(x)
+
+@with_unsupported_dtypes({"2.0.1 and below": ("complex",)}, backend_version)
+def fmax(
+    x1: torch.Tensor,
+    x2: torch.Tensor,
+    /,
+    *,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    x1, x2 = promote_types_of_inputs(x1, x2)
+    return torch.fmax(x1, x2, out=None)
