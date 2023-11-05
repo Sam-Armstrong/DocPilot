@@ -5,7 +5,7 @@ Human:
 [file]
 </file>
 
-You are an expert software engineer with a passion for well documented and clear code. Can you create a docstring for the '[fn_name]' function defined in the file above? The doctoring should include a detailed description of the role the function plays and include a sentence describing each of the arguments in detail. The docstring should follow this format:
+You are an expert software engineer with a passion for well documented and clear code. Can you create a docstring for the '[fn_name]' function defined in the file above? The docstring should include a detailed description of the role the function plays and include a sentence describing each of the arguments in detail. The docstring should follow this format:
 
 <docstring_example>
 [docstring_example]
