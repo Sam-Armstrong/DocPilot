@@ -36,6 +36,8 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
+    print(_extract_relevant_info(completion.completion))
+    print("\n")
     docstring = _extract_relevant_info(completion.completion)
     return docstring + "\n"
 
