@@ -137,5 +137,5 @@ def merge_docstring(file_fns_without_docstring):
 
 if __name__ == "__main__":
     key = sys.argv[1]
-    docstring_dict = add_docstring(key) 
+    docstring_dict = add_docstring(key)
     merge_docstring(docstring_dict)

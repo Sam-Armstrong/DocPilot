@@ -1530,6 +1530,31 @@ def concat(
     axis: int = 0,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
+    """Concatenates multiple tensors along a given axis.
+
+    Parameters
+    ----------
+    xs : Tuple[tf.Tensor, ...] or List[tf.Tensor]
+        The input tensors to concatenate.
+
+    axis : int, optional
+        The axis along which to concatenate. Default is 0.
+
+    out : Optional[Union[tf.Tensor, tf.Variable]], optional
+        Optional output tensor to write the result to. Default is None.
+
+    Returns
+    -------
+    ret : Union[tf.Tensor, tf.Variable]
+        The concatenated tensor result.
+
+    Examples
+    --------
+    >>> x = tf.constant([1, 2, 3])
+    >>> y = tf.constant([4, 5, 6])
+    >>> concat((x, y))
+    <tf.Tensor: shape=(6,), dtype=int32, numpy=array([1, 2, 3, 4, 5, 6], dtype=int32)>
+    """
     is_tuple = type(xs) is tuple
     is_axis_none = axis is None
     if is_tuple:
@@ -1560,6 +1585,36 @@ def expand_dims(
     axis: Union[int, Sequence[int]] = 0,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
+    """Expand the shape of x by inserting a dimension of 1 at axis.
+
+    Parameters
+    ----------
+    x : Union[tf.Tensor, tf.Variable]
+        Input tensor to expand dimensions of.
+    axis : Union[int, Sequence[int]]
+        Position(s) to insert the new axis.
+    out : Optional[Union[tf.Tensor, tf.Variable]]
+        Optional output tensor.
+
+    Returns
+    -------
+    Union[tf.Tensor, tf.Variable]
+        Tensor with expanded dimensions.
+
+    Examples
+    --------
+    >>> x = tf.constant([1,2,3])
+    >>> expand_dims(x, axis=0)
+    <tf.Tensor: shape=(1, 3), dtype=int32, numpy=array([[1, 2, 3]], dtype=int32)>
+
+    >>> x = tf.constant([[1,2],[3,4]])
+    >>> expand_dims(x, axis=-1)
+    <tf.Tensor: shape=(2, 2, 1), dtype=int32, numpy=
+    array([[[1],
+            [2]],
+           [[3],
+            [4]]], dtype=int32)>
+    """
     try:
         out_shape = _calculate_out_shape(axis, x.shape)
         ret = tf.reshape(x, shape=out_shape)
@@ -1576,6 +1631,41 @@ def flip(
     axis: Optional[Union[int, Sequence[int]]] = None,
     out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
+    """Flip array in the specified axes.
+
+    Flips the input array `x` in the axes specified by `axis`. `axis` can be a
+    single axis index, or a sequence of axis indices. If `axis` is None, all
+    axes are flipped.
+
+    Parameters
+    ----------
+    x : tf.Tensor
+        Input tensor to flip.
+
+    axis : int or Sequence[int], optional
+        Axis or axes along which to flip. By default None, which flips all axes.
+
+    out : tf.Tensor, optional
+        Output tensor.
+
+    Returns
+    -------
+    tf.Tensor
+        Tensor with the same shape as x but flipped along specified axis/axes.
+
+    Examples
+    --------
+    >>> x = tf.constant([[1, 2, 3], [4, 5, 6]])
+    >>> flip(x)
+    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
+    array([[6, 5, 4],
+           [3, 2, 1]])>
+
+    >>> flip(x, axis=0)
+    <tf.Tensor: shape=(2, 3), dtype=int32, numpy=
+    array([[4, 5, 6],
+           [1, 2, 3]])>
+    """
     num_dims = len(x.shape)
     if not num_dims:
         ret = x

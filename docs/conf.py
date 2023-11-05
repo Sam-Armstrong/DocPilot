@@ -12,16 +12,17 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../test_scripts'))
+
+sys.path.insert(0, os.path.abspath("../test_scripts"))
 
 extensions = [
-    'sphinx.ext.autodoc',
+    "sphinx.ext.autodoc",
     # ... other extensions
 ]
 
 # Add the module names or patterns that you want to document
 autodoc_mock_imports = [
-    'dummy-test.py',
+    "dummy-test.py",
 ]
 
 
