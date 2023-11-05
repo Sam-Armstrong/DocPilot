@@ -337,70 +337,39 @@ def stack(
     except ValueError as e:
         raise ivy.utils.exceptions.IvyIndexError(e)
 
-def split(
+@with_unsupported_dtypes(
+    {
+        "2.13.0 and below": (
+            "uint8",
+            "uint16",
+            "uint32",
+            "int8",
+            "int16",
+        )
+    },
+    backend_version,
+)
+def tile(
     x: Union[tf.Tensor, tf.Variable],
     /,
+    repeats: Sequence[int],
     *,
-    copy: Optional[bool] = None,
-    num_or_size_splits: Optional[
-        Union[int, Sequence[int], Union[tf.Tensor, tf.Variable]]
-    ] = None,
-    axis: int = 0,
-    with_remainder: bool = False,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
 ) -> Union[tf.Tensor, tf.Variable]:
     if x.shape == ():
- Here is the docstring for the split function:
-
-```python
-"""
-Split array into multiple sub-arrays along given axis. 
-
-Parameters
-----------
-x: Union[tf.Tensor, tf.Variable]
-    Tensor to be split.
-copy: Optional[bool]
-    Default is None. If true, make a copy of array before split.
-num_or_size_splits: Optional[Union[int, Sequence[int], Union[tf.Tensor, tf.Variable]]]
-    Either number of evenly sized splits or sequence of sizes for each split along axis. Default is None, which splits into as many even sized splits as possible along axis.
-axis: int
-    Axis along which to split. Default is 0.
-with_remainder: bool  
-    If true, allow uneven splits such that each split is at least 1 in size along axis. Default is False.
-     
-Returns
--------
-Union[tf.Tensor, tf.Variable]
-    List of sub-arrays.
-
-Raises
-------
-IvyException
-    If input array had no shape but num_sections was specified.
-IvyIndexError  
-    If split was not possible along specified axis.
-"""
-```
-        if num_or_size_splits is not None and num_or_size_splits != 1:
-            raise ivy.utils.exceptions.IvyException(
-                "input array had no shape, but num_sections specified was"
-                f" {num_or_size_splits}"
-            )
-        return [x]
-    if num_or_size_splits is None:
-        dim_size = tf.shape(x)[axis]
-        num_or_size_splits = int(dim_size)
-    if isinstance(num_or_size_splits, (tf.Tensor, tf.Variable)):
-        num_or_size_splits = tf.cast(num_or_size_splits, tf.int32)
-        num_or_size_splits = num_or_size_splits.numpy().tolist()
-    elif isinstance(num_or_size_splits, int) and with_remainder:
-        num_chunks = x.shape[axis] / num_or_size_splits
-        num_chunks_int = math.floor(num_chunks)
-        remainder = num_chunks - num_chunks_int
-        if remainder != 0:
-            num_or_size_splits = [num_or_size_splits] * num_chunks_int + [
-                int(remainder * num_or_size_splits)
-            ]
-
-    return tf.split(x, num_or_size_splits, axis)
-
+        x = tf.reshape(x, (-1,))
+    if isinstance(repeats, Number):
+        repeats = [repeats]
+    if isinstance(repeats, tf.Tensor) and repeats.shape == ():
+        repeats = tf.reshape(repeats, (-1,))
+    # code to unify behaviour with numpy and torch
+    if len(x.shape) < len(repeats):
+        while len(x.shape) != len(repeats):
+            x = tf.expand_dims(x, 0)
+    elif len(x.shape) > len(repeats):
+        repeats = list(repeats)
+        while len(x.shape) != len(repeats):
+            repeats = [1] + repeats
+    # TODO remove the unifying behaviour code if tensorflow handles this
+    # https://github.com/tensorflow/tensorflow/issues/58002
+    return tf.tile(x, repeats)

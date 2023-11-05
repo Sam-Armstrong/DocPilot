@@ -36,7 +36,8 @@ def generate_docstring(file_str, fn_name, key):
         max_tokens_to_sample=300,
         prompt=prompt,
     )
-    return completion.completion + "\n"
+    docstring = _extract_relevant_info(completion.completion)
+    return docstring + "\n"
 
 def add_docstring(key):
     # diff text file all strings, parse the file to only fetch statements with additions
