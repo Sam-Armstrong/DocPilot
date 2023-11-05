@@ -3032,3 +3032,27 @@ def nansum(
     """
     dtype = ivy.as_native_dtype(dtype)
     return torch.nansum(x, dim=axis, keepdim=keepdims, dtype=dtype)
+
+
+def diff(
+    x: Union[torch.Tensor, list, tuple],
+    /,
+    *,
+    n: int = 1,
+    axis: int = -1,
+    prepend: Optional[Union[torch.Tensor, int, float, list, tuple]] = None,
+    append: Optional[Union[torch.Tensor, int, float, list, tuple]] = None,
+    out: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    x = x if isinstance(x, torch.Tensor) else torch.tensor(x)
+    prepend = (
+        prepend
+        if isinstance(prepend, torch.Tensor) or prepend is None
+        else torch.tensor(prepend)
+    )
+    append = (
+        append
+        if isinstance(append, torch.Tensor) or append is None
+        else torch.tensor(append)
+    )
+    return torch.diff(x, n=n, dim=axis, prepend=prepend, append=append)
