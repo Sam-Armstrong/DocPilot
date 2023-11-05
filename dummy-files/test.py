@@ -35,3 +35,15 @@ def expand_dims(
         return ret
     except (tf.errors.InvalidArgumentError, np.AxisError) as error:
         raise ivy.utils.exceptions.IvyIndexError(error)
+    
+def permute_dims(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    axes: Tuple[int, ...],
+    *,
+    copy: Optional[bool] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    return tf.transpose(x, perm=axes)
+
+
