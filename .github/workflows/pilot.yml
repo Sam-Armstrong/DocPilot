@@ -13,9 +13,7 @@ jobs:
             with:
               repository: ${{github.repository}}
               token: ${{secrets.GITHUB_TOKEN}}
-              ref: ${{github.ref}}
-              path: DocPilot
-              persist-credentials: false
+              ref: ${{github.head_ref}}
               submodules: "recursive"
               fetch-depth: 100
 

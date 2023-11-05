@@ -303,3 +303,23 @@ def reshape(
     if order == "F":
         return _reshape_fortran_tf(x, shape)
     return tf.reshape(x, shape)
+
+def roll(
+    x: Union[tf.Tensor, tf.Variable],
+    /,
+    shift: Union[int, Sequence[int]],
+    *,
+    axis: Optional[Union[int, Sequence[int]]] = None,
+    out: Optional[Union[tf.Tensor, tf.Variable]] = None,
+) -> Union[tf.Tensor, tf.Variable]:
+    if axis is None:
+        originalShape = x.shape
+        axis = 0
+        x = tf.reshape(x, [-1])
+        roll = tf.roll(x, shift, axis)
+        ret = tf.reshape(roll, originalShape)
+    else:
+        if isinstance(shift, int) and (type(axis) in [list, tuple]):
+            shift = [shift for _ in range(len(axis))]
+        ret = tf.roll(x, shift, axis)
+    return ret
