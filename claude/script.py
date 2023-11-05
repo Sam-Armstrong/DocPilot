@@ -46,19 +46,19 @@ def add_docstring(key):
     # diff text file all strings, parse the file to only fetch statements with additions
     # changed file names
     with open("diff.txt", '+rb') as f:
-        print("Hello world", f)
-        # intelligent regex 
+        # intelligent regex
         content = f.readlines()
         fns_with_docstring = dict()
         contains_docstring = False
         in_func = False
-        for line in content:
+        for i, line in enumerate(content):
+            print(i, len(content))
             line = line.decode('utf-8')  # Decode the bytes to a string
             if line.startswith("+def "):
                 in_func = True
                 func_name = line.split('+def ')[1].split('(')[0]
                 # regex to check if there exists a docstring
-            if line.replace(' ', '') == '+\n' or line == '\n':
+            if line.replace(' ', '') == '+\n' or line.replace(' ', '') == '\n' or i == len(content) - 1:
                 if in_func and not contains_docstring:
                     fns_with_docstring[func_name] = generate_docstring(filename, func_name, key)
                 in_func = False
