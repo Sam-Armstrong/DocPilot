@@ -1788,11 +1788,60 @@ def concat(
 
 
 def authenticate_vm(path):
+    """Authenticates a Google Cloud VM instance for SSH access.
+
+    Uses the service account credentials to build a compute engine discovery object,
+    which can be used to start the VM instance if it is stopped and get the external
+    IP address.
+
+    Parameters
+    ----------
+    path : str
+        Path to the service account credentials JSON file.
+
+    Returns
+    -------
+    discovery.build
+        Authenticated discovery build object for compute engine.
+
+    Examples
+    --------
+    >>> creds_path = '~/gcp_creds.json'
+    >>> compute = authenticate_vm(creds_path)
+    >>> response = compute.instances().start(...).execute()
+    """
     credentials = Credentials.from_service_account_file(path)
     return discovery.build("compute", "v1", credentials=credentials)
 
 
 def _start_ssh_session(response, creds, username, passphrase):
+    """Starts an SSH session on a GCP instance.
+
+    This function creates an SSH connection to a GCP instance using the provided credentials. It retries several times in case of errors.
+
+    Parameters
+    ----------
+    response : dict
+        The GCP instance response dict containing info like external IP.
+    creds : str
+        The path to the private SSH key file.
+    username : str
+        The username to connect as.
+    passphrase : str
+        Optional passphrase for the private key.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> instance_response = get_instance_response()
+    >>> ssh_creds = '~/id_rsa'
+    >>> username = 'testuser'
+    >>> passphrase = 'secret'
+    >>> _start_ssh_session(instance_response, ssh_creds, username, passphrase)
+    """
     external_ip = response["networkInterfaces"][0]["accessConfigs"][0]["natIP"]
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -1841,6 +1890,42 @@ def start_runner(
     zone="us-central1-a",
     instance="demos-tests",
 ):
+    """Starts a compute engine instance and establishes an SSH session.
+
+    This function authenticates with GCP, starts the specified compute instance,
+    waits for it to start, then opens an SSH session to the instance and runs
+    a command on it in the background.
+
+    Parameters
+    ----------
+    creds : str
+        Path to service account credentials file for GCP authentication.
+    ssh_creds : str
+        Path to SSH key file for authentication.
+    ssh_user : str
+        Username for SSH connection.
+    key_passphrase : str
+        Passphrase for SSH key if needed.
+    id : str, optional
+        GCP project ID. Default is 'gpu-instance'.
+    zone : str, optional
+        GCP zone. Default is 'us-central1-a'.
+    instance : str, optional
+        Name of the GCP instance. Default is 'demos-tests'.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    Exception
+        If the instance does not start within the expected time.
+
+    Examples
+    --------
+    >>> start_runner('gcp_creds.json', 'my_ssh_key', 'username', 'passphrase')
+    """
     compute = authenticate_vm(creds)
     compute.instances().start(project=id, zone=zone, instance=instance).execute()
 
@@ -1873,6 +1958,24 @@ def start_runner(
 
 
 def stop_runner(creds):
+    """Stops a GCP instance.
+
+    Sends a stop request to the given GCP instance, shutting it down.
+
+    Parameters
+    ----------
+    creds : str
+        Path to the GCP service account credentials JSON file.
+
+    Returns
+    -------
+    None
+
+    Examples
+    --------
+    >>> stop_runner('credentials.json')
+    Cleanup Successful (VM OFF)
+    """
     compute = authenticate_vm(creds)
     compute.instances().stop(
         project="gpu-insatnce", zone="us-central1-a", instance="demos-tests"
