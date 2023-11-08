@@ -30,10 +30,17 @@ jobs:
               pip install anthropic
               pip install pre-commit
 
+          # - name: Run OpenAI Magic
+          #   run: |
+          #     cd DocPilot
+          #     python3 src/openai-integration.py ${{secrets.OPENAI_API_KEY}}
+          #     rm -rf diff.txt temp.txt
+
+
           - name: Run Claude Magic
             run: |
               cd DocPilot
-              python3 src/integration.py ${{secrets.ANTHROPIC_API_KEY}}
+              python3 src/claude-integration.py ${{secrets.ANTHROPIC_API_KEY}}
               rm -rf diff.txt temp.txt
 
           - name: Check for changes 📝

@@ -1,0 +1,21 @@
+/**
+ * Description paragraph here.
+ *
+ * @param {array_like} first - The 1st param description.
+ * @param {type} second - The 2nd param description.
+ * @param {object} [third='value'] - The 3rd param, by default 'value'. (optional)
+ *
+ * @returns {type} - Description of the return value.
+ *
+ * @throws {ErrorType1} - Description of the first error condition.
+ * @throws {ErrorType2} - Description of the second error condition.
+ *
+ * @example
+ * // Example 1: Describe how to use the function with sample inputs and outputs.
+ * const result1 = myFunction(arg1, arg2);
+ * console.log(result1); // Output: some result
+ *
+ * // Example 2: Provide another example.
+ * const result2 = myFunction(arg3, arg4);
+ * console.log(result2); // Output: some other result
+ */

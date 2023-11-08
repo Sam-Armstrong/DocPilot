@@ -1,0 +1,28 @@
+/**
+ * Description paragraph here.
+ *
+ * @param first The 1st param description.
+ * @param second The 2nd param description.
+ * @param third The 3rd param, by default 'value'. (optional)
+ * @return Description of the return value.
+ * @throws KeyError When a key error occurs.
+ * @throws OtherError When another error occurs.
+ *
+ * Examples:
+ * - Some minimal examples of using the function should go here.
+ * - For example:
+ *   <pre>
+ *   int[] result1 = myFunction(arg1, arg2);
+ *   System.out.println(result1); // Output: some result
+ *   </pre>
+ *
+ *   <pre>
+ *   List<Integer> seqList = sequentialList(1, 5);
+ *   System.out.println(seqList); // Output: [1, 2, 3, 4]
+ *   System.out.println(seqList.size()); // Output: 4
+ *   System.out.println(Collections.min(seqList)); // Output: 1
+ *   </pre>
+ */
+public ReturnType myFunction(ParameterType1 first, ParameterType2 second, ParameterType3 third) {
+    // Function implementation here.
+}
